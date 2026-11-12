@@ -6,6 +6,17 @@ Maquette de refonte du site d'Ice Please Morocco (FAAB & CO), glaçons premium e
 
 Site statique en HTML, CSS et JavaScript, construit avec [Vite](https://vite.dev). Aucun framework, aucune base de données. La boutique (`/shop`, panier, livraison, paiement simulé, compte) rejoue le parcours d'Odoo dans le navigateur (`src/shop.js`, données dans `localStorage`) ; dans Odoo, c'est la boutique d'Odoo qui sert, habillée avec ce design (`ODOO_BOUTIQUE.md`). Français à la racine, anglais sous `/en/`, arabe sous `/ar/` (mise en page inversée).
 
+## Version 6.1
+
+La V6, avec les réglages qui la font se comporter comme une application sur téléphone :
+
+- la barre du haut ne reste plus « survolée » après un toucher : les effets de survol sont réservés à la souris, et elle s'efface de nouveau pendant la lecture ;
+- plus de flash gris quand on touche un lien ou un bouton, et chaque commande réagit dès que le doigt se pose ;
+- un appui long sur un bouton ne sélectionne plus son texte ;
+- les marges et le bouton WhatsApp tiennent compte de l'encoche en paysage, y compris en arabe ;
+- le menu défile seul, sans entraîner la page ;
+- clavier : les noms et villes commencent par une majuscule, la quantité se valide avec « OK », la recherche avec « Rechercher ».
+
 ## Lancer en local
 
 ```bash

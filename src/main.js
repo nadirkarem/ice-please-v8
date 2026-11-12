@@ -14,6 +14,9 @@ const offScrollOf = (fn) => scroller.removeEventListener('scroll', fn);
 let cleanups = [];
 const track = (fn) => cleanups.push(fn);
 
+/* iOS Safari only applies :active (the press state of every control) on a page that listens to touches */
+document.addEventListener('touchstart', () => {}, { passive: true });
+
 initSmoothScroll();
 initHeader();
 initOdooChrome();

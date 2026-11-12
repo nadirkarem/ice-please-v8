@@ -306,7 +306,7 @@ function initList(section) {
 /* ---- cart page ---------------------------------------------------------------------------------------------- */
 const qtyHtml = (id, qty, min) => `<div class="ip-qty" role="group" aria-label="${esc(tr('buy.qty'))}">
       <button class="ip-qty__btn" type="button" data-ip-qty="-1" aria-label="${esc(tr('buy.qtyMinus'))}">${ICON.minus}</button>
-      <input class="ip-qty__input" id="${id}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="${qty}" data-min="${min}" aria-label="${esc(tr('buy.qty'))}">
+      <input class="ip-qty__input" id="${id}" type="text" inputmode="numeric" enterkeyhint="done" pattern="[0-9]*" autocomplete="off" value="${qty}" data-min="${min}" aria-label="${esc(tr('buy.qty'))}">
       <button class="ip-qty__btn" type="button" data-ip-qty="1" aria-label="${esc(tr('buy.qtyPlus'))}">${ICON.plus}</button>
     </div>`;
 

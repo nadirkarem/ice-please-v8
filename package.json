@@ -1,7 +1,7 @@
 {
-  "name": "ice-please-site-v6",
+  "name": "ice-please-site-v6-1",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.6.1",
   "type": "module",
   "description": "Ice Please (Maroc) — site et boutique FR/EN/AR, statique, portable vers Odoo",
   "scripts": {

@@ -122,7 +122,7 @@ function optionSelect(info, t) {
 export function qtyControl(t, { id = 'buy-qty', value = 1, min = 1, label } = {}) {
   return `<div class="ip-qty" role="group" aria-label="${esc(label ?? t.buy.qty)}">
             <button class="ip-qty__btn" type="button" data-ip-qty="-1" aria-label="${esc(t.buy.qtyMinus)}">${icon('minus')}</button>
-            <input class="ip-qty__input" id="${id}" name="qty" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="${value}" data-min="${min}" aria-label="${esc(t.buy.qty)}">
+            <input class="ip-qty__input" id="${id}" name="qty" type="text" inputmode="numeric" enterkeyhint="done" pattern="[0-9]*" autocomplete="off" value="${value}" data-min="${min}" aria-label="${esc(t.buy.qty)}">
             <button class="ip-qty__btn" type="button" data-ip-qty="1" aria-label="${esc(t.buy.qtyPlus)}">${icon('plus')}</button>
           </div>`;
 }
@@ -226,7 +226,7 @@ export function shop(ctx) {
           <div class="ip-chips" role="group" aria-label="${esc(t.list.filters)}">${chips}</div>
           <div class="ip-search">
             <label class="ip-sr" for="shop-q">${esc(t.list.search)}</label>
-            <input id="shop-q" type="search" data-ip-search placeholder="${esc(t.list.searchPlaceholder)}" autocomplete="off">
+            <input id="shop-q" type="search" enterkeyhint="search" data-ip-search placeholder="${esc(t.list.searchPlaceholder)}" autocomplete="off">
           </div>
         </div>
         <p class="ip-shop__count" role="status" aria-live="polite" data-ip-count data-template="${esc(t.list.shown)}"></p>
@@ -386,7 +386,7 @@ export function checkout(ctx) {
             <fieldset class="ip-panel ip-fieldset">
               <legend class="ip-fieldset__legend">${esc(t.checkout.contact)}</legend>
               <div class="ip-form__grid">
-                ${field(ctx, k, { key: 'name', label: f.name, required: true, autocomplete: 'name' })}
+                ${field(ctx, k, { key: 'name', label: f.name, required: true, autocomplete: 'name', attrs: 'autocapitalize="words"' })}
                 ${field(ctx, k, { key: 'phone', label: f.phone, type: 'tel', required: true, autocomplete: 'tel', inputmode: 'tel' })}
                 ${field(ctx, k, { key: 'email', label: f.email, type: 'email', required: true, autocomplete: 'email', wide: true })}
                 ${field(ctx, k, { key: 'company', label: f.company, autocomplete: 'organization' })}
@@ -397,7 +397,7 @@ export function checkout(ctx) {
               <legend class="ip-fieldset__legend">${esc(t.checkout.address)}</legend>
               <div class="ip-form__grid">
                 ${field(ctx, k, { key: 'street', label: f.street, required: true, autocomplete: 'street-address', wide: true })}
-                ${field(ctx, k, { key: 'city', label: f.city, required: true, autocomplete: 'address-level2' })}
+                ${field(ctx, k, { key: 'city', label: f.city, required: true, autocomplete: 'address-level2', attrs: 'autocapitalize="words"' })}
                 ${field(ctx, k, { key: 'zip', label: f.zip, autocomplete: 'postal-code', inputmode: 'numeric' })}
                 ${field(ctx, k, { key: 'date', label: f.date, type: 'date' })}
                 ${field(ctx, k, { key: 'note', label: f.note, textarea: true, wide: true })}
@@ -561,7 +561,7 @@ function authForm(ctx, kind) {
         ${demoNote(ctx)}
         <form class="ip-panel ip-form" data-ip-auth-form="${kind}" novalidate>
           <div class="ip-form__grid ip-form__grid--one">
-            ${signup ? field(ctx, k, { key: 'name', label: f.name, required: true, autocomplete: 'name' }) : ''}
+            ${signup ? field(ctx, k, { key: 'name', label: f.name, required: true, autocomplete: 'name', attrs: 'autocapitalize="words"' }) : ''}
             ${field(ctx, k, { key: 'email', label: f.email, type: 'email', required: true, autocomplete: signup ? 'email' : 'username' })}
             ${field(ctx, k, { key: 'password', label: f.password, type: 'password', required: true, autocomplete: signup ? 'new-password' : 'current-password', hint: signup ? t.passwordHint : undefined })}
             ${signup ? `<div class="ip-field ip-field--wide"><label class="ip-check"><input type="checkbox" name="pro" id="f-su-pro" data-ip-pro><span>${esc(t.pro)}</span></label></div>

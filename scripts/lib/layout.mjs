@@ -57,7 +57,7 @@ export function langSwitch(ctx, page) {
 /**
  * The bar is "clear" at the top of the page (white-on-photo over the home hero), frosted and
  * translucent once the page moves, and denser while the pointer or the keyboard is on it.
- * The state is driven by .is-top (set by main.js) and by :hover / :focus-within in CSS.
+ * The state is driven by .is-top (set by main.js) and in CSS by the keyboard (:focus-visible) or a mouse (:hover, mouse only).
  */
 function header(ctx, page) {
   const { c, lang, site } = ctx;
@@ -276,7 +276,8 @@ export function layout(ctx, page, main, { fragment = false } = {}) {
 <html lang="${lang}" dir="${dir}">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="color-scheme" content="light">
   <title>${title}</title>
   ${description ? `<meta name="description" content="${description}">` : ''}
   <meta name="theme-color" content="${site.themeColor}">
