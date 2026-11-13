@@ -73,8 +73,7 @@ export function productInfo(ctx, id) {
     name: p.h1.replace(/\*\*/g, ''), // the full name: "Ice stamps" rather than the card label "Accessoires"
     card: p.card,
     h1: p.h1,
-    href: urlFor(`shop-${id}`, ctx.lang), // the product page of the shop
-    presentation: urlFor(id, ctx.lang), // the editorial page of the range
+    href: urlFor(`shop-${id}`, ctx.lang), // the product page: it presents and sells
     img: { src: `/img/${img}-${width}.webp`, w: m.w, h: m.h, alt: ctx.c.alt[img] ?? '' },
     mode: spec.mode,
     unit,

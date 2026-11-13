@@ -1,10 +1,21 @@
 # Ice Please, maquette du site (FR / EN / AR)
 
-Aperçu en ligne : **https://nadirkarem.github.io/ice-please-v6/** (version 6 : V5 + la boutique en ligne, brouillon non indexé).
+Aperçu en ligne : **https://nadirkarem.github.io/ice-please-v8/** (version 8 : la V6 avec certains choix de structure de la V7, brouillon non indexé).
 
 Maquette de refonte du site d'Ice Please Morocco (FAAB & CO), glaçons premium et clear ice pour les professionnels de la boisson. Ce n'est pas le site officiel : les textes reprennent le site actuel, les visuels de synthèse (vidéo, sphère dans un verre de whisky) sont des illustrations, et la page est en `noindex`.
 
 Site statique en HTML, CSS et JavaScript, construit avec [Vite](https://vite.dev). Aucun framework, aucune base de données. La boutique (`/shop`, panier, livraison, paiement simulé, compte) rejoue le parcours d'Odoo dans le navigateur (`src/shop.js`, données dans `localStorage`) ; dans Odoo, c'est la boutique d'Odoo qui sert, habillée avec ce design (`ODOO_BOUTIQUE.md`). Français à la racine, anglais sous `/en/`, arabe sous `/ar/` (mise en page inversée).
+
+## Version 8
+
+La V6 (design, photos, vidéos) avec la structure de la V7 :
+
+- **« Nos glaçons » et la boutique ne font plus qu'une page** (`/shop/`) : les cartes de la V6, chacune avec son prix et son action (ajouter au panier, choisir les options ou demander un devis), des filtres par catégorie (sans recherche ni compteur), puis « Notre Vision ». Chaque glaçon a une seule page qui le présente et le vend (`/shop/cube-xl/`…).
+- **« À propos » est supprimée** ; sa photo (le glaçon signé, tenu dans un gant noir) signe maintenant l'accueil.
+- **Accueil** : les trois glaçons de base défilent vers la droite pendant qu'on descend (vers la gauche en arabe), puis, sur fond noir, les glaçons sur mesure et la signature ; ensuite la vidéo de l'engagement (« Manipulé avec précision. Servi avec perfection. »), le service avec la vidéo du service, Instagram et le contact de la V6.
+- **Fond bleu clair** (`#E3F1FA`) au lieu du blanc ; noir (`#04080C`) pour le sur-mesure et la signature, atteint par un long dégradé.
+- Les anciennes adresses (`/glacons/`, `/about-us/`, `/cube-xl/`…) redirigent vers les nouvelles.
+- Le paquet Odoo de la V6 (`npm run odoo`) n'est pas adapté à cette version.
 
 ## Version 6.1
 
@@ -28,8 +39,8 @@ npm run build    # génère dist/ (100 pages)
 Pour tester la construction sous un sous-dossier, comme sur GitHub Pages :
 
 ```bash
-BASE_PATH=/ice-please-v6 npm run build
-BASE_PATH=/ice-please-v6 npx vite preview
+BASE_PATH=/ice-please-v8 npm run build
+BASE_PATH=/ice-please-v8 npx vite preview
 ```
 
 ## Où modifier quoi
@@ -49,4 +60,11 @@ BASE_PATH=/ice-please-v6 npx vite preview
 
 ## Mise en ligne
 
-Chaque envoi sur la branche `main` reconstruit le site et le publie sur GitHub Pages (`.github/workflows/pages.yml`). Le même envoi publie aussi le paquet pour Odoo (pages, catalogue de la boutique, feuille de style et script) sous `/odoo-pack/`, `/ip.css` et `/ip.js` : une page HTTPS comme celle d'Odoo ne peut pas lire un serveur local, elle peut lire celui-ci.
+GitHub Pages sert la branche `gh-pages`, qui contient le site construit (pas de GitHub Actions) :
+
+```bash
+BASE_PATH=/ice-please-v8 npm run build
+touch dist/.nojekyll
+```
+
+puis le contenu de `dist/` est poussé sur `gh-pages`.

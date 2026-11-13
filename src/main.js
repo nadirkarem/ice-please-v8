@@ -31,6 +31,8 @@ function initPage() {
   initFrost();
   initSaga();
   initScenes();
+  initRange();
+  initTone();
   initVideo();
   initFloatingButton();
   initTabs();
@@ -475,6 +477,101 @@ function initScenes() {
   });
 }
 
+/* The three clear shapes (.ip-range): the section is made as tall as the strip is long, its content pins to the screen and
+   the vertical scroll slides the strip sideways (to the left in Arabic). A short rest at both ends lets the first and the
+   last card be read before anything moves. Chased frame by frame like the films, so a wheel that moves in steps still
+   glides. Under reduced motion nothing is set up: the strip scrolls sideways under the finger. */
+function initRange() {
+  const sections = document.querySelectorAll('[data-ip-hscroll]');
+  if (!sections.length || reduced()) return;
+  const clamp = (v) => Math.min(Math.max(v, 0), 1);
+  const REST = 0.1; // share of the run spent still, at each end
+  sections.forEach((section) => {
+    const win = section.querySelector('[data-ip-window]');
+    const strip = section.querySelector('[data-ip-track]');
+    if (!win || !strip) return;
+    const rtl = getComputedStyle(section).direction === 'rtl';
+    let dist = 0, current = -1, frame = 0, near = false;
+    section.classList.add('is-live');
+    const measure = () => {
+      dist = Math.max(0, strip.scrollWidth - win.clientWidth);
+      // vertical distance: a bit more than the sideways one, plus the rests
+      section.style.setProperty('--ip-run', `${Math.round((dist * 1.25) / (1 - 2 * REST))}px`);
+    };
+    const progress = () => {
+      const span = section.offsetHeight - window.innerHeight;
+      const p = span > 0 ? clamp(-section.getBoundingClientRect().top / span) : 0;
+      return clamp((p - REST) / (1 - 2 * REST));
+    };
+    const apply = (q) => {
+      section.style.setProperty('--x', `${((rtl ? 1 : -1) * q * dist).toFixed(1)}px`);
+      section.style.setProperty('--q', q.toFixed(4));
+    };
+    const tick = () => {
+      frame = 0;
+      const target = progress();
+      current = current < 0 ? target : current + (target - current) * 0.2;
+      if (Math.abs(target - current) < 0.0005) current = target;
+      apply(current);
+      if (near && current !== target) frame = requestAnimationFrame(tick);
+    };
+    const kick = () => { if (near && !frame) frame = requestAnimationFrame(tick); };
+    const onResize = () => { measure(); current = -1; kick(); };
+    const io = new IntersectionObserver(([e]) => { near = e.isIntersecting; if (near) { current = -1; kick(); } }, { rootMargin: '25% 0px 25% 0px' });
+    const ro = new ResizeObserver(onResize);
+    // a card reached with the keyboard: bring the page to where that card is in view
+    const onFocus = (e) => {
+      const card = e.target.closest('.ip-piece');
+      if (!card) return;
+      const cards = [...strip.children];
+      const q = cards.length > 1 ? cards.indexOf(card) / (cards.length - 1) : 0;
+      const span = section.offsetHeight - window.innerHeight;
+      const top = section.getBoundingClientRect().top + scrollTop() + (REST + q * (1 - 2 * REST)) * span;
+      if (window.__ipLenis) window.__ipLenis.scrollTo(top, { immediate: true, force: true }); else window.scrollTo({ top, behavior: 'instant' });
+    };
+    measure();
+    io.observe(section);
+    ro.observe(win);
+    onScrollOf(kick);
+    strip.addEventListener('focusin', onFocus);
+    apply(progress());
+    track(() => { io.disconnect(); ro.disconnect(); offScrollOf(kick); strip.removeEventListener('focusin', onFocus); cancelAnimationFrame(frame); });
+  });
+}
+
+/* The colour of what sits under the top of the screen: the bar turns white over a night set, and on a phone the browser
+   around the page follows (theme-color: the status bar and Android's address bar). The root background, what the rubber
+   band shows past either end, is the colour of the top of the page in its upper half and the footer's in the lower half. */
+function initTone() {
+  const SET_COLORS = { sun: '#e3f1fa', night: '#04080c', photo: '#58778a', footer: '#16304d' }; // inside: initPage() runs before the module's constants
+  const header = document.querySelector('[data-ip-header]');
+  const theme = document.querySelector('meta[name="theme-color"]');
+  if (!header) return;
+  const sets = [...document.querySelectorAll('main [data-set], .ip-footer')];
+  const first = document.querySelector('main [data-set]')?.dataset.set || 'sun';
+  let frame = 0;
+  const update = () => {
+    frame = 0;
+    const line = 44; // the band under the status bar, whether the bar is shown or has stepped aside
+    let set = 'sun';
+    for (const el of sets) {
+      const r = el.getBoundingClientRect();
+      if (r.top <= line && r.bottom > line) set = el.matches('.ip-footer') ? 'footer' : el.dataset.set;
+    }
+    const over = set === 'night' ? 'night' : 'sun';
+    if (header.dataset.over !== over) header.dataset.over = over;
+    if (theme && theme.content !== SET_COLORS[set]) theme.content = SET_COLORS[set];
+    const lower = scrollTop() + innerHeight / 2 > document.documentElement.scrollHeight / 2;
+    const rootColor = lower ? SET_COLORS.footer : SET_COLORS[first];
+    if (document.documentElement.style.backgroundColor !== rootColor) document.documentElement.style.backgroundColor = rootColor;
+  };
+  const onScroll = () => { frame = frame || requestAnimationFrame(update); };
+  update();
+  onScrollOf(onScroll);
+  window.addEventListener('resize', onScroll);
+  track(() => { offScrollOf(onScroll); window.removeEventListener('resize', onScroll); cancelAnimationFrame(frame); });
+}
+
 /* Loop video: plays only while on screen, with a visible pause control; a still under reduced motion. */
 function initVideo() {
   document.querySelectorAll('[data-ip-video]').forEach((wrap) => {
@@ -506,7 +603,7 @@ function initFloatingButton() {
     entries.forEach((entry) => (entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target)));
     button.classList.toggle('is-away', visible.size > 0);
   });
-  document.querySelectorAll('.ip-hero, .ip-contact, .ip-cta, .ip-footer, .ip-product__cta').forEach((zone) => observer.observe(zone));
+  document.querySelectorAll('.ip-hero, .ip-range, .ip-contact, .ip-cta, .ip-footer, .ip-buy, .ip-deliver').forEach((zone) => observer.observe(zone));
   track(() => observer.disconnect());
 }
 
@@ -555,10 +652,11 @@ function initRouter() {
     cleanups = [];
     window.__ipCloseMenu?.();
     const next = doc.querySelector('.ip');
+    if (!next) { location.href = url.href; return; } // a former address: its redirect page takes over
     document.title = doc.title;
     document.documentElement.lang = doc.documentElement.lang;
     document.documentElement.dir = doc.documentElement.dir;
-    for (const sel of ['meta[name="description"]', 'link[rel="canonical"]']) {
+    for (const sel of ['meta[name="description"]', 'link[rel="canonical"]', 'meta[name="theme-color"]']) {
       const a = document.head.querySelector(sel), b = doc.head.querySelector(sel);
       if (a && b) a.replaceWith(b.cloneNode(true)); else if (b) document.head.append(b.cloneNode(true)); else a?.remove();
     }

@@ -1,18 +1,23 @@
 // Document shell: <head>, header, footer, floating WhatsApp button.
 import { esc, plain, waLink } from './html.mjs';
 import { icon } from './icons.mjs';
-import { LANGS, ROUTES, PRODUCT_IDS, SHOP_IDS, ACCOUNT_IDS, PRIVATE_IDS, pageUrl, shopProductOf, urlFor } from './routes.mjs';
+import { LANGS, ROUTES, PRODUCT_IDS, SHOP_IDS, ACCOUNT_IDS, PRIVATE_IDS, REDIRECTS, pageUrl, shopProductOf, urlFor } from './routes.mjs';
 import { allProducts, PAGE_IMAGE } from './catalog.mjs';
 
-const NAV = ['glacons', 'shop', 'savoir', 'about', 'contact'];
+/** Version 8: "Nos glaçons" is the shop (one window to see and to order), "À propos" is gone. */
+const NAV = ['shop', 'savoir', 'contact'];
+const navLabel = (c, id) => (id === 'shop' ? c.nav.glacons : c.nav[id]);
+
+/** Colour of the browser around the page (status bar, rubber band), per set of the page: src/main.js follows the scroll. */
+export const SET_COLORS = { sun: '#e3f1fa', night: '#04080c', photo: '#58778a' };
 
 export function makeCtx(lang, content) {
   const c = content.langs[lang];
   return { lang, dir: c.dir, c, langs: content.langs, site: content.site, shop: content.shop, images: content.images, legal: content.legal };
 }
 
-/** The nav entry to highlight: product pages belong to "Nos glaçons", the pages of a visit to "Boutique". */
-const activeNav = (id) => (PRODUCT_IDS.includes(id) ? 'glacons' : SHOP_IDS.includes(id) ? 'shop' : id);
+/** The nav entry to highlight: the product pages and the pages of a visit belong to "Nos glaçons". */
+const activeNav = (id) => (SHOP_IDS.includes(id) ? 'shop' : id);
 
 /**
  * In the Odoo flavour the cart is Odoo's: same address, and the counter carries Odoo's own classes (`o_wsale_my_cart` on an <li>,
@@ -36,12 +41,9 @@ function pageMeta(ctx, page) {
   const shopId = shopProductOf(page.id);
   if (shopId) {
     const p = c.products[shopId];
-    return { title: c.shop.productTitle.replace('{name}', p.h1), description: p.paras[0] };
-  }
-  if (PRODUCT_IDS.includes(page.id)) {
-    const p = c.products[page.id];
     return { title: p.metaTitle, description: p.paras[0] };
   }
+  if (page.id === 'shop') return c.meta.glacons;
   return c.meta[page.id] ?? c.meta.notFound;
 }
 
@@ -64,7 +66,7 @@ function header(ctx, page) {
   const active = activeNav(page.id);
   // only the home page opens on a full-bleed photograph: white bar text while the bar is clear
   const tone = page.id === 'home' ? 'dark' : 'light';
-  const link = (id) => `<a href="${urlFor(id, lang)}"${active === id ? ' aria-current="page"' : ''}>${esc(c.nav[id])}</a>`;
+  const link = (id) => `<a href="${urlFor(id, lang)}"${active === id ? ' aria-current="page"' : ''}>${esc(navLabel(c, id))}</a>`;
   const wa = waLink(ctx, c.wa.generic);
   const [open, close] = ctx.odoo ? ['<div role="banner"', '</div>'] : ['<header', '</header>'];
   return `${open} class="ip-header is-top" data-ip-header data-tone="${tone}">
@@ -99,7 +101,7 @@ function header(ctx, page) {
 
 function footer(ctx, page) {
   const { c, lang, site } = ctx;
-  const li = (id) => `<li><a href="${urlFor(id, lang)}">${esc(c.nav[id])}</a></li>`;
+  const li = (id) => `<li><a href="${urlFor(id, lang)}">${esc(navLabel(c, id))}</a></li>`;
   const note = c.ui.legalNote;
   const [open, close] = ctx.odoo ? ['<div role="contentinfo"', '</div>'] : ['<footer', '</footer>'];
   return `${open} class="ip-footer">
@@ -145,9 +147,8 @@ function floating(ctx) {
 /**
  * Structured data for search engines (JSON-LD): a short description of the page in a vocabulary they share.
  * - home: the organisation and the site;
- * - presentation pages of the range: the breadcrumb;
- * - product pages of the shop: the product (with an offer only once a price is confirmed) and its breadcrumb;
- * - shop: the breadcrumb and the list of products.
+ * - product pages: the product (with an offer only once a price is confirmed) and its breadcrumb;
+ * - "Nos glaçons" (the shop): the breadcrumb and the list of products.
  * The pages of a visit (cart, checkout, account…) carry none: they are never indexed.
  */
 /** The shared parts of a page, for the layout patch that dresses Odoo's own pages (shop, cart, account…) with the same header and footer. */
@@ -175,17 +176,6 @@ function jsonLd(ctx, page) {
       },
       { '@type': 'WebSite', '@id': `${site.url}/#website`, name: site.name, url: site.url, inLanguage: lang, publisher: { '@id': `${site.url}/#organization` } },
     );
-  }
-  if (PRODUCT_IDS.includes(page.id)) {
-    // the presentation page of the range: where it sits in the site, nothing to buy (the product and its offer are on the shop page)
-    graph.push({
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: c.nav.home, item: abs(urlFor('home', lang)) },
-        { '@type': 'ListItem', position: 2, name: c.nav.glacons, item: abs(urlFor('glacons', lang)) },
-        { '@type': 'ListItem', position: 3, name: c.products[page.id].h1, item: abs(page.url) },
-      ],
-    });
   }
   const shopId = shopProductOf(page.id);
   if (shopId) {
@@ -216,7 +206,7 @@ function jsonLd(ctx, page) {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: c.nav.home, item: abs(urlFor('home', lang)) },
-        { '@type': 'ListItem', position: 2, name: c.nav.shop, item: abs(urlFor('shop', lang)) },
+        { '@type': 'ListItem', position: 2, name: c.nav.glacons, item: abs(urlFor('shop', lang)) },
         { '@type': 'ListItem', position: 3, name: p.h1, item: abs(page.url) },
       ],
     });
@@ -227,26 +217,48 @@ function jsonLd(ctx, page) {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: c.nav.home, item: abs(urlFor('home', lang)) },
-          { '@type': 'ListItem', position: 2, name: c.nav.shop, item: abs(page.url) },
+          { '@type': 'ListItem', position: 2, name: c.nav.glacons, item: abs(page.url) },
         ],
       },
       {
         '@type': 'ItemList',
-        name: c.shop.list.title,
-        itemListElement: PRODUCT_IDS.map((id, i) => ({ '@type': 'ListItem', position: i + 1, name: c.products[id].card, url: abs(urlFor(id, lang)) })),
+        name: c.nav.glacons,
+        itemListElement: PRODUCT_IDS.map((id, i) => ({ '@type': 'ListItem', position: i + 1, name: c.products[id].card, url: abs(urlFor(`shop-${id}`, lang)) })),
       },
     );
   }
   return graph.length ? `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })}</script>` : '';
 }
 
+/** A former address: a page that only sends the visitor (and search engines, through the canonical link) to the new one. */
+function redirectPage(ctx, page) {
+  const { c, lang, dir, site } = ctx;
+  const target = urlFor(REDIRECTS[page.id], lang);
+  return `<!doctype html>
+<html lang="${lang}" dir="${dir}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${esc(site.name)}</title>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="${site.url}${target}">
+  <meta http-equiv="refresh" content="0; url=${target}">
+</head>
+<body>
+  <p>${esc(c.v8.ui.redirect)} <a href="${target}">${esc(c.v8.ui.follow)}</a></p>
+</body>
+</html>
+`;
+}
+
 export function layout(ctx, page, main, { fragment = false } = {}) {
   const { c, lang, site, dir } = ctx;
+  if (REDIRECTS[page.id] && !fragment) return redirectPage(ctx, page);
   const meta = pageMeta(ctx, page);
   const title = plain(ctx, meta.title);
   const description = plain(ctx, meta.description ?? '');
   const canonical = site.url + page.url;
-  const kind = PRODUCT_IDS.includes(page.id) ? 'product' : SHOP_IDS.includes(page.id) || ACCOUNT_IDS.includes(page.id) ? 'shop' : page.id;
+  const kind = shopProductOf(page.id) ? 'product' : SHOP_IDS.includes(page.id) || ACCOUNT_IDS.includes(page.id) ? 'shop' : page.id;
   // the pages of a visit are never indexed, even once the site is live
   const noindex = !site.indexable || PRIVATE_IDS.includes(page.id);
 
@@ -280,7 +292,7 @@ export function layout(ctx, page, main, { fragment = false } = {}) {
   <meta name="color-scheme" content="light">
   <title>${title}</title>
   ${description ? `<meta name="description" content="${description}">` : ''}
-  <meta name="theme-color" content="${site.themeColor}">
+  <meta name="theme-color" content="${page.id === 'home' ? SET_COLORS.photo : SET_COLORS.sun}">
   ${noindex ? '<meta name="robots" content="noindex, nofollow">' : ''}
   <link rel="canonical" href="${canonical}">
   <meta name="ip-base" content="/">

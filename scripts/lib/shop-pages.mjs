@@ -3,9 +3,9 @@
 // the visitor (cart lines, totals, order, account). Everything the script needs travels in one JSON block
 // (#ip-shop-data) written at the end of <main>, so the client-side router swaps it together with the page.
 //
-// The range pages ("Nos glaçons" and the product presentations) only present the ice and point to the shop; prices,
-// options, quantities and the cart live here. With `ctx.odoo` the shop is Odoo's own: the pointer links to the product page of
-// Odoo's shop, and none of the pages of this file are produced (see scripts/odoo-pack.mjs).
+// Version 8: "Nos glaçons" is the shop and each product has one page that presents and sells it; both are rendered in
+// pages.mjs with the pieces exported here (price, buy box, sticky bar, data block). Cart, checkout and the rest live here.
+// The Odoo pack of the V6 (scripts/odoo-pack.mjs) is not part of this version.
 import { esc, md, plain, waLink, picture } from './html.mjs';
 import { icon } from './icons.mjs';
 import { PRODUCT_IDS, shopProductOf, urlFor } from './routes.mjs';
@@ -44,7 +44,7 @@ export function shopData(ctx, { ids } = {}) {
 
 // ---------------------------------------------------------------- pieces
 
-const demoNote = (ctx) => (ctx.shop.demo ? `<p class="ip-demo" role="note">${icon('info')}<span>${esc(ctx.c.shop.demo)}</span></p>` : '');
+export const demoNote = (ctx) => (ctx.shop.demo ? `<p class="ip-demo" role="note">${icon('info')}<span>${esc(ctx.c.shop.demo)}</span></p>` : '');
 
 /** Compact title band for the pages of a visit (cart, checkout…): smaller than the editorial page heads. */
 function head(ctx, { title, lead }) {
@@ -178,147 +178,6 @@ export function buyBar(ctx, id) {
     ? `<button class="ip-btn ip-btn--primary" type="button" data-ip-bar-add="${id}">${icon('bag')}<span>${esc(t.buy.bar)}</span></button>`
     : `<a class="ip-btn ip-btn--primary" href="#buy">${icon('bag')}<span>${esc(t.buy.bar)}</span></a>`;
   return `<div class="ip-buybar" data-ip-buybar><span class="ip-buybar__text"><span class="ip-buybar__name">${name}</span><span class="ip-buybar__price">${priceTag(ctx, info.price, { hint: false })}</span></span>${action}</div>`;
-}
-
-// ---------------------------------------------------------------- listing
-
-function productCard(ctx, id) {
-  const t = ctx.c.shop;
-  const p = ctx.c.products[id];
-  const info = productInfo(ctx, id);
-  const img = CARD_IMAGE[id];
-  const search = `${p.card} ${p.h1} ${p.paras[0]}`.toLowerCase();
-  const price = info.mode === 'quote'
-    ? `<span class="ip-buy__badge">${esc(t.buy.quoteOnly)}</span>`
-    : `${priceTag(ctx, info.price)}${info.unit ? `<span class="ip-pcard__unit">/ ${esc(info.unit)}</span>` : ''}`;
-  let action;
-  if (info.mode === 'quote') {
-    action = `<a class="ip-btn ip-btn--ghost ip-btn--sm" href="${quoteUrl(ctx)}"><span>${esc(t.buy.requestQuote)}</span></a>`;
-  } else if (info.option || info.min > 1) {
-    action = `<a class="ip-btn ip-btn--ghost ip-btn--sm" href="${info.href}"><span>${esc(t.buy.chooseOptions)}</span></a>`;
-  } else {
-    action = `<button class="ip-btn ip-btn--primary ip-btn--sm" type="button" data-ip-quick="${id}" aria-label="${esc(`${t.buy.add} : ${p.card}`)}">${icon('bag')}<span>${esc(t.buy.add)}</span></button>`;
-  }
-  return `<li class="ip-pcard" data-cat="${info.category}" data-search="${esc(search)}">
-      <a class="ip-pcard__media" href="${info.href}" tabindex="-1" aria-hidden="true">${picture(ctx, img, { alt: '', sizes: '(min-width: 1000px) 28vw, (min-width: 640px) 44vw, 120px' })}</a>
-      <div class="ip-pcard__body">
-        <h2 class="ip-pcard__name"><a href="${info.href}">${esc(p.card)}</a></h2>
-        <p class="ip-pcard__desc">${md(ctx, p.paras[0])}</p>
-        <p class="ip-pcard__price">${price}</p>
-        <div class="ip-pcard__actions">${action}</div>
-      </div>
-    </li>`;
-}
-
-export function shop(ctx) {
-  const { c } = ctx;
-  const t = c.shop;
-  const chips = [
-    `<button class="ip-chip" type="button" data-ip-filter="" aria-pressed="true">${esc(t.list.all)}</button>`,
-    ...ctx.shop.categories.map((cat) => `<button class="ip-chip" type="button" data-ip-filter="${cat.id}" aria-pressed="false">${esc(t.list.categories[cat.id])}</button>`),
-  ].join('');
-  return `
-    ${head(ctx, { title: t.list.title, lead: t.list.lead })}
-    <section class="ip-section ip-section--tight ip-shop" data-ip-shop="list">
-      <div class="ip-wrap">
-        ${demoNote(ctx)}
-        <div class="ip-shopbar">
-          <div class="ip-chips" role="group" aria-label="${esc(t.list.filters)}">${chips}</div>
-          <div class="ip-search">
-            <label class="ip-sr" for="shop-q">${esc(t.list.search)}</label>
-            <input id="shop-q" type="search" enterkeyhint="search" data-ip-search placeholder="${esc(t.list.searchPlaceholder)}" autocomplete="off">
-          </div>
-        </div>
-        <p class="ip-shop__count" role="status" aria-live="polite" data-ip-count data-template="${esc(t.list.shown)}"></p>
-        <ul class="ip-pgrid" data-ip-grid>${PRODUCT_IDS.map((id) => productCard(ctx, id)).join('')}</ul>
-        <div class="ip-empty" data-ip-empty hidden>
-          <p>${esc(t.list.empty)}</p>
-          <button class="ip-btn ip-btn--ghost" type="button" data-ip-reset>${esc(t.list.reset)}</button>
-        </div>
-      </div>
-    </section>
-    <section class="ip-section ip-cta">
-      <div class="ip-wrap ip-cta__inner">
-        <h2 class="ip-cta__title">${esc(t.list.quoteTitle)}</h2>
-        <div class="ip-cta__actions">
-          <a class="ip-btn ip-btn--primary ip-btn--lg" href="${quoteUrl(ctx)}"><span>${esc(t.buy.requestQuote)}</span>${icon('arrow')}</a>
-          <a class="ip-btn ip-btn--ghost ip-btn--lg" href="${waLink(ctx, c.wa.generic)}" ${external}>${icon('whatsapp')}<span>${esc(c.ui.whatsapp)}</span></a>
-        </div>
-      </div>
-    </section>
-    ${shopData(ctx)}`;
-}
-
-// ---------------------------------------------------------------- product page of the shop
-
-/** /shop/cube-xl: image, price, options, quantity, add to cart. The editorial page of the range is one link away. */
-export function shopProduct(ctx, page) {
-  const { c, lang } = ctx;
-  const t = c.shop;
-  const id = shopProductOf(page.id);
-  const p = c.products[id];
-  const img = PAGE_IMAGE[id];
-  const specs = p.specs.length
-    ? `<div class="ip-specs"><h2 class="ip-specs__title">${esc(c.ui.specs)}</h2><dl>${p.specs.map(([key, value]) => `<div><dt>${esc(c.specLabels[key])}</dt><dd>${md(ctx, value)}</dd></div>`).join('')}</dl></div>`
-    : '';
-  return `
-    <article class="ip-product ip-product--shop">
-      <div class="ip-wrap ip-product__grid">
-        <div class="ip-product__media">${picture(ctx, img, { alt: alt(ctx, img), priority: true, sizes: '(min-width: 900px) 46vw, 100vw' })}</div>
-        <div class="ip-product__body">
-          <nav class="ip-crumbs" aria-label="${esc(t.list.title)}">
-            <a href="${urlFor('home', lang)}">${esc(c.ui.home)}</a><span aria-hidden="true">/</span><a href="${urlFor('shop', lang)}">${esc(t.productPage.crumb)}</a>
-          </nav>
-          ${demoNote(ctx)}
-          <h1 class="ip-product__title">${md(ctx, p.h1)}</h1>
-          <p class="ip-lead">${md(ctx, p.paras[0])}</p>
-          ${buyBox(ctx, id)}
-          ${specs}
-          <p class="ip-product__more"><a class="ip-link" href="${urlFor(id, lang)}"><span>${esc(t.productPage.presentation)}</span>${icon('arrow')}</a></p>
-          <p class="ip-product__more"><a class="ip-link" href="${urlFor('shop', lang)}"><span>${esc(t.productPage.back)}</span></a></p>
-        </div>
-      </div>
-    </article>
-    ${buyBar(ctx, id)}
-    ${shopData(ctx, { ids: [id] })}`;
-}
-
-// ---------------------------------------------------------------- what the range pages show instead of an order
-
-/** Address of the product in the shop: ours when static, Odoo's own product page (resolved by the installer) in the Odoo pack. */
-const shopHref = (ctx, id) => (ctx.odoo ? `{{shop:${id}}}` : urlFor(`shop-${id}`, ctx.lang));
-
-/** On a product presentation page: a short pointer to the shop, nothing to buy here. */
-export function pointer(ctx, id) {
-  const t = ctx.c.shop.pointer;
-  return `<div class="ip-pointer">
-        <p class="ip-pointer__lead">${esc(t.lead)}</p>
-        <a class="ip-btn ip-btn--primary ip-btn--lg" href="${shopHref(ctx, id)}">${icon('bag')}<span>${esc(t.product)}</span></a>
-      </div>`;
-}
-
-/** Sticky bar of the presentation page on phones. */
-export function pointerBar(ctx, id) {
-  const t = ctx.c.shop.pointer;
-  return `<div class="ip-buybar"><span class="ip-buybar__name">${md(ctx, ctx.c.products[id].h1)}</span><a class="ip-btn ip-btn--primary" href="${shopHref(ctx, id)}">${icon('bag')}<span>${esc(t.bar)}</span></a></div>`;
-}
-
-/** Closing band of "Nos glaçons": the way to the shop (and to a person, for a question). */
-export function pointerBand(ctx) {
-  const { c } = ctx;
-  const t = c.shop.pointer;
-  return `<section class="ip-section ip-cta">
-      <div class="ip-wrap ip-cta__inner">
-        <div class="ip-cta__text">
-          <h2 class="ip-cta__title">${esc(t.title)}</h2>
-          <p class="ip-lead">${esc(t.lead)}</p>
-        </div>
-        <div class="ip-cta__actions">
-          <a class="ip-btn ip-btn--primary ip-btn--lg" href="${urlFor('shop', ctx.lang)}">${icon('bag')}<span>${esc(t.button)}</span></a>
-          <a class="ip-btn ip-btn--ghost ip-btn--lg" href="${urlFor('contact', ctx.lang)}"><span>${esc(c.ui.contactUs)}</span>${icon('arrow')}</a>
-        </div>
-      </div>
-    </section>`;
 }
 
 // ---------------------------------------------------------------- cart

@@ -257,42 +257,16 @@ function initBuy(box) {
   });
 }
 
-/* ---- listing: categories, search, quick add ----------------------------------------------------------------- */
+/* ---- listing: categories, quick add ------------------------------------------------------------------------- */
 function initList(section) {
-  const cards = [...section.querySelectorAll('.ip-pcard')];
-  const grid = section.querySelector('[data-ip-grid]');
-  const count = section.querySelector('[data-ip-count]');
-  const empty = section.querySelector('[data-ip-empty]');
+  // "Nos glaçons": categories only (the range is short: no search box and no count)
+  const cards = [...section.querySelectorAll('[data-ip-grid] > [data-cat]')];
   const chips = [...section.querySelectorAll('[data-ip-filter]')];
-  const search = section.querySelector('[data-ip-search]');
-  let category = '';
-  let query = '';
-
-  const apply = () => {
-    let n = 0;
-    cards.forEach((card) => {
-      const ok = (!category || card.dataset.cat === category) && (!query || card.dataset.search.includes(query));
-      card.hidden = !ok;
-      if (ok) n += 1;
-    });
-    count.textContent = count.dataset.template.replace('{n}', String(n));
-    empty.hidden = n !== 0;
-    grid.hidden = n === 0;
-  };
   chips.forEach((chip) => chip.addEventListener('click', () => {
-    category = chip.dataset.ipFilter;
+    const category = chip.dataset.ipFilter;
     chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
-    apply();
+    cards.forEach((card) => { card.hidden = Boolean(category) && card.dataset.cat !== category; });
   }));
-  search.addEventListener('input', () => { query = search.value.trim().toLowerCase(); apply(); });
-  section.querySelector('[data-ip-reset]')?.addEventListener('click', () => {
-    search.value = '';
-    query = '';
-    category = '';
-    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.ipFilter === '')));
-    apply();
-    search.focus();
-  });
   section.addEventListener('click', (e) => {
     const quick = e.target.closest('[data-ip-quick]');
     if (!quick) return;
@@ -300,7 +274,6 @@ function initList(section) {
     addToCart(id, '', data.products[id].min);
     toast(tr('buy.added', { name: data.products[id].name }), { href: link('cart'), label: tr('buy.viewCart') });
   });
-  apply();
 }
 
 /* ---- cart page ---------------------------------------------------------------------------------------------- */

@@ -1,6 +1,6 @@
 {
   "nav": {
-    "shop": "Shop"
+    "shop": "Our ice"
   },
   "ui": {
     "cart": "Cart",
@@ -126,7 +126,7 @@
       "stepOf": "Step {n} of {total}",
       "summary": "Summary",
       "empty": "Your cart is empty.",
-      "emptyLead": "Browse the shop to add ice to your order.",
+      "emptyLead": "Browse our ice to add some to your order.",
       "continue": "Continue shopping",
       "checkout": "Place the order",
       "remove": "Remove",
@@ -275,7 +275,7 @@
       "proBadge": "Professional account: prices being validated",
       "orders": "My orders",
       "ordersEmpty": "You have no orders yet.",
-      "ordersCta": "Go to the shop",
+      "ordersCta": "See our ice",
       "cols": {
         "ref": "Order",
         "date": "Date",

@@ -43,6 +43,17 @@ export const ROUTES = {
   ...Object.fromEntries(PRODUCT_IDS.map((id) => [id, same(id)])),
 };
 
+/**
+ * Version 8: "Nos glaçons" is the shop itself (/shop), each product has one page that presents and sells it (/shop/cube-xl),
+ * and "À propos" is gone (its photograph now signs the home page). The former addresses stay alive as redirect pages, so no
+ * existing link breaks.
+ */
+export const REDIRECTS = {
+  glacons: 'shop',
+  about: 'home',
+  ...Object.fromEntries(PRODUCT_IDS.map((id) => [id, `shop-${id}`])),
+};
+
 export const prefix = (lang) => (lang === DEFAULT_LANG ? '' : `${lang}/`);
 
 export function pageUrl(id, lang) {

@@ -2,7 +2,7 @@
    ICE PLEASE — design system "Cristal clair"
 
    Palette, taken from the logo and the product photography (no warm accent):
-     Glacier #F5F9FC  page              Ink   #0B1623  text (≈ 17:1 on Glacier)
+     Glacier #E3F1FA  page (V8: pale ice blue; V6 was #F5F9FC)      Night #04080C  custom ice and signature              Ink   #0B1623  text (≈ 17:1 on Glacier)
      Frost   #A6C5E8  brand blue        Fjord #16304D  footer, dark buttons (white text 13:1)
      Sky     #3A8FD6  the blue of "Please!", large type only (3.7:1 on Glacier)
    Slate #4A5B6E is the secondary text colour (6.6:1 on Glacier).
@@ -28,7 +28,7 @@ html {
   scrollbar-width: thin;
   scrollbar-color: #a6c5e8 #e4edf5;
 }
-body { margin: 0; background: #f5f9fc; }
+body { margin: 0; background: #e3f1fa; }
 html { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 /* Lenis (smooth wheel scrolling on desktop pointers): its own rules, kept next to the page frame */
@@ -39,11 +39,12 @@ html.lenis, html.lenis body { height: auto; }
 
 /* ---- tokens -------------------------------------------------------------- */
 .ip {
-  --ip-glacier: #f5f9fc;
+  --ip-glacier: #e3f1fa; /* V8: a pale ice blue instead of white, taken between the blue paper of the photographs and the light of the films */
+  --ip-night: #04080c; /* the black of the bar photographs (custom ice, the signed cube) */
   --ip-ink: #0b1623;
   --ip-frost: #a6c5e8;
-  --ip-frost-soft: #dbe8f5;
-  --ip-mist: #e4edf5;
+  --ip-frost-soft: #cde4f4;
+  --ip-mist: #d4e8f5;
   --ip-fjord: #16304d;
   --ip-sky: #3a8fd6;
   --ip-slate: #4a5b6e;
@@ -93,7 +94,7 @@ html.lenis, html.lenis body { height: auto; }
 /* touch: no wait for a double-tap zoom on controls, and a long press on a control neither selects its label nor opens
    the link preview (text and pictures elsewhere stay selectable). */
 :where(.ip) :is(a, button, label, summary, select, [role='tab']) { touch-action: manipulation; }
-:where(.ip) :is(button, .ip-btn, .ip-chip, .ip-tab, .ip-lang a, .ip-nav a, .ip-sheet__nav a, .ip-qty, .ip-iconbtn, .ip-cartlink, .ip-burger, .ip-card__link, .ip-tile__link, .ip-pcard__media, .ip-insta__tile, .ip-choice, .ip-wa, .ip-details a) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+:where(.ip) :is(button, .ip-btn, .ip-chip, .ip-tab, .ip-lang a, .ip-nav a, .ip-sheet__nav a, .ip-qty, .ip-iconbtn, .ip-cartlink, .ip-burger, .ip-card__link, .ip-tile__media, .ip-piece__media, .ip-row, .ip-pcard__media, .ip-insta__tile, .ip-choice, .ip-wa, .ip-details a) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 :where(.ip) :is(.ip-footer, .ip-hero) :focus-visible { outline-color: var(--ip-frost); }
 :where(.ip) ::selection { background: var(--ip-frost); color: var(--ip-ink); }
 :where(.ip) ::placeholder { color: #5d6c7d; opacity: 1; }
@@ -181,7 +182,7 @@ html.lenis, html.lenis body { height: auto; }
    At the top of the page the text is white on the home photograph; once the page has moved it is ink
    on a faint page-coloured haze, and the bar steps aside while the visitor reads down. */
 .ip-header {
-  --bar-bg: rgb(245 249 252 / 0);
+  --bar-bg: rgb(227 241 250 / 0);
   --bar-filter: none;
   --bar-edge: inset 0 0 0 0 transparent, inset 0 0 0 0 transparent;
   --bar-drop: 0 0 0 0 transparent;
@@ -199,14 +200,14 @@ html.lenis, html.lenis body { height: auto; }
 /* "Engaged" (dense glass, ink text): the menu is open, the keyboard is in the bar, or a mouse is over it. A finger never
    engages it: on a touch screen the hover and focus states stay stuck after a tap, so the bar would never step aside again. */
 .ip-header:is(:has(:focus-visible), .is-open) {
-  --bar-bg: rgb(245 249 252 / 0.92);
+  --bar-bg: rgb(227 241 250 / 0.92);
   --bar-filter: blur(24px) saturate(1.7) brightness(1.1);
   --bar-edge: inset 0 1px 0 rgb(255 255 255 / 0.65), inset 0 0 0 1px rgb(255 255 255 / 0.32);
   --bar-drop: 0 16px 40px -18px rgb(11 22 35 / 0.45);
 }
 @media (hover: hover) and (pointer: fine) {
   .ip-header:hover {
-    --bar-bg: rgb(245 249 252 / 0.92);
+    --bar-bg: rgb(227 241 250 / 0.92);
     --bar-filter: blur(24px) saturate(1.7) brightness(1.1);
     --bar-edge: inset 0 1px 0 rgb(255 255 255 / 0.65), inset 0 0 0 1px rgb(255 255 255 / 0.32);
     --bar-drop: 0 16px 40px -18px rgb(11 22 35 / 0.45);
@@ -215,7 +216,7 @@ html.lenis, html.lenis body { height: auto; }
 /* a faint haze behind the invisible bar once the page has moved, so the links stay readable */
 .ip-header::before {
   content: ''; position: absolute; inset: 0 0 -28px; z-index: 0; pointer-events: none;
-  background: linear-gradient(rgb(245 249 252 / 0.9), rgb(245 249 252 / 0));
+  background: linear-gradient(rgb(227 241 250 / 0.9), rgb(227 241 250 / 0));
   opacity: 0; transition: opacity 0.5s var(--ip-ease);
 }
 .ip-header:not(.is-top):not(.is-open)::before { opacity: 1; }
@@ -294,7 +295,7 @@ html.lenis, html.lenis body { height: auto; }
   position: fixed; inset: 0; z-index: 1;
   display: flex; flex-direction: column; justify-content: space-between; gap: 32px;
   padding: calc(var(--ip-bar-h) + 40px + env(safe-area-inset-top, 0px)) var(--ip-gutter) max(28px, env(safe-area-inset-bottom));
-  background: rgb(245 249 252 / 0.9);
+  background: rgb(227 241 250 / 0.9);
   -webkit-backdrop-filter: blur(28px) saturate(1.8); backdrop-filter: blur(28px) saturate(1.8);
   overflow-y: auto; overscroll-behavior: contain; pointer-events: auto; color: var(--ip-ink);
   opacity: 0; visibility: hidden;
@@ -462,8 +463,8 @@ html.lenis, html.lenis body { height: auto; }
   color: var(--ip-ink);
 }
 .ip-card__name { font-size: 1.05rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.012em; }
-.ip-card__go, .ip-tile__go { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--ip-ink); color: #fff; }
-.ip-card__go .ip-icon, .ip-tile__go .ip-icon { width: 18px; height: 18px; }
+.ip-card__go, .ip-row__go { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--ip-ink); color: #fff; }
+.ip-card__go .ip-icon, .ip-row__go .ip-icon { width: 18px; height: 18px; }
 @media (hover: hover) and (pointer: fine) {
   .ip-card__link:hover img { transform: scale(1.045); }
   .ip-card__link:hover .ip-card__go .ip-icon--dir { transform: translateX(3px); }
@@ -770,29 +771,38 @@ html.lenis, html.lenis body { height: auto; }
   .ip-about__split--flip .ip-about__media { order: 2; }
 }
 
-/* collection: horizontal rows on phones, tall cards on desktop */
+/* "Nos glaçons" (the range and the shop in one window): horizontal cards on phones, tall cards from 1000px.
+   Each card shows the price and the one action that fits (add, choose the options, ask for a quote). */
+.ip-shop .ip-chips { margin-bottom: clamp(22px, 3vw, 36px); }
 .ip-tiles { display: grid; gap: 14px; }
-.ip-tile__link {
-  position: relative; display: grid; grid-template-columns: 112px 1fr; gap: 16px; align-items: center; padding: 12px;
-  border-radius: 24px; background: #fff; box-shadow: inset 0 0 0 1px var(--ip-line); transition: transform 0.4s var(--ip-spring), box-shadow 0.3s;
-}
-.ip-tile__link:active { transform: scale(0.985); transition-duration: 0.08s; }
-.ip-tile__media { overflow: hidden; border-radius: 16px; aspect-ratio: 1; }
-.ip-tile__media .ip-pic { height: 100%; }
-.ip-tile__media img { transition: transform 1s var(--ip-ease); }
-.ip-tile__body { display: grid; gap: 4px; padding-inline-end: 52px; min-width: 0; }
+.ip-tile { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: start; padding: 12px; border-radius: 24px; background: #fff; box-shadow: inset 0 0 0 1px var(--ip-line); }
+.ip-tile[hidden] { display: none; }
+.ip-tile__media { display: block; overflow: hidden; border-radius: 16px; aspect-ratio: 1; background: var(--ip-mist); transition: transform 0.4s var(--ip-spring); }
+.ip-tile__media:active { transform: scale(0.975); transition-duration: 0.08s; }
+.ip-tile__media .ip-pic, .ip-tile__media img { width: 100%; height: 100%; }
+.ip-tile__media img { object-fit: cover; object-position: var(--fp); transition: transform 1s var(--ip-ease); }
+.ip-tile__body { display: grid; gap: 4px; min-width: 0; }
 .ip-tile__name { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
-.ip-tile__desc { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; font-size: 0.93rem; line-height: 1.45; color: var(--ip-slate); }
-.ip-tile__go { position: absolute; inset-inline-end: 14px; bottom: 14px; }
-@media (hover: hover) and (pointer: fine) { .ip-tile__link:hover img { transform: scale(1.045); } }
+.ip-tile__name a { display: inline-flex; align-items: center; min-height: 44px; margin-block: -8px; }
+.ip-tile__desc { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; font-size: 0.93rem; line-height: 1.45; color: var(--ip-slate); }
+.ip-tile__buy { display: grid; justify-items: start; gap: 8px; margin-top: 8px; }
+.ip-tile__price { font-weight: 650; font-variant-numeric: tabular-nums; }
+.ip-tile__unit { margin-inline-start: 0.35em; font-size: 0.9rem; font-weight: 500; color: var(--ip-slate); }
+@media (hover: hover) and (pointer: fine) { .ip-tile:hover .ip-tile__media img { transform: scale(1.045); } .ip-tile__name a:hover { text-decoration: underline; text-underline-offset: 0.3em; } }
 @media (min-width: 640px) { .ip-tiles { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
 @media (min-width: 1000px) {
-  .ip-tiles { grid-template-columns: repeat(3, 1fr); gap: 40px 24px; }
-  .ip-tile__link { display: block; padding: 0; background: transparent; box-shadow: none; }
+  .ip-tiles { grid-template-columns: repeat(3, 1fr); gap: 48px 24px; }
+  .ip-tile { display: flex; flex-direction: column; gap: 0; padding: 0; background: transparent; box-shadow: none; }
   .ip-tile__media { aspect-ratio: 4 / 5; border-radius: var(--ip-radius-l); }
-  .ip-tile__body { padding: 16px 0 0; gap: 6px; }
-  .ip-tile__go { position: static; margin-top: 8px; width: 40px; height: 40px; }
+  .ip-tile__body { flex: 1; align-content: start; padding-top: 16px; gap: 6px; }
+  .ip-tile__name { font-size: 1.3rem; }
+  .ip-tile__desc { -webkit-line-clamp: 3; line-clamp: 3; }
+  .ip-tile__buy { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--ip-line); }
+  .ip-tile__desc { margin-bottom: 10px; }
 }
+
+/* our vision, under the range */
+.ip-vision { padding-top: clamp(24px, 4vw, 56px); }
 
 /* product page */
 .ip-product { padding-top: calc(var(--ip-header-space) + clamp(0px, 2vw, 28px)); }
@@ -823,7 +833,7 @@ html.lenis, html.lenis body { height: auto; }
   position: fixed; inset-inline: 0; bottom: 0; z-index: 45;
   display: flex; align-items: center; justify-content: space-between; gap: 14px;
   padding: 10px max(14px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
-  background: rgb(245 249 252 / 0.82);
+  background: rgb(227 241 250 / 0.82);
   -webkit-backdrop-filter: blur(22px) saturate(1.7); backdrop-filter: blur(22px) saturate(1.7);
   box-shadow: 0 -1px 0 var(--ip-line);
 }
@@ -933,9 +943,6 @@ html.lenis, html.lenis body { height: auto; }
 .ip-demo .ip-icon { flex: none; width: 1.2rem; height: 1.2rem; margin-top: 0.15rem; }
 
 /* the presentation pages only point to the shop */
-.ip-pointer { display: grid; justify-items: start; gap: 14px; margin-top: 1.75rem; padding: clamp(18px, 2.4vw, 28px); border-radius: var(--ip-radius-l); background: var(--ip-frost-soft); }
-.ip-pointer__lead { color: var(--ip-fjord); font-weight: 500; }
-.ip-pointer + p { margin-top: 1.75rem; }
 .ip-cta__text { display: grid; gap: 10px; }
 .ip-cta__text .ip-lead { max-width: 28rem; font-size: 1.05rem; color: var(--ip-fjord); }
 .ip-product__more { margin-top: 0.5rem; }
@@ -1105,7 +1112,7 @@ html.lenis, html.lenis body { height: auto; }
 /* the radio is a 44px target; only its 22px ring is drawn */
 .ip-choice input { -webkit-appearance: none; appearance: none; width: 44px; height: 44px; margin: 0; border-radius: 50%; background: radial-gradient(circle at center, #fff 0 9.5px, rgb(11 22 35 / 0.55) 10px 11px, transparent 11.5px); }
 .ip-choice input:checked { background: radial-gradient(circle at center, #fff 0 4px, var(--ip-fjord) 4.5px 11px, transparent 11.5px); }
-.ip-choice:has(input:checked) { background: #f1f7fd; box-shadow: inset 0 0 0 2px var(--ip-fjord); }
+.ip-choice:has(input:checked) { background: #f3f9fd; box-shadow: inset 0 0 0 2px var(--ip-fjord); }
 .ip-choice:has(:focus-visible) { box-shadow: inset 0 0 0 2px var(--ip-fjord), 0 0 0 4px rgb(166 197 232 / 0.85); }
 .ip-choice input:focus-visible { outline-offset: -4px; border-radius: 50%; }
 .ip-choice__body { padding-block: 8px; }
@@ -1200,6 +1207,152 @@ html.lenis, html.lenis body { height: auto; }
 @media (max-width: 899px) { .ip:has(.ip-buybar) .ip-toast { bottom: 84px; } }
 @media (prefers-reduced-transparency: reduce) { .ip-toast { box-shadow: 0 0 0 1px var(--ip-frost); } }
 
+/* ===========================================================================================================
+   VERSION 8 — the home page of the V6 with the structure of the V7
+   =========================================================================================================== */
+
+/* ---- the three clear shapes: a strip that slides sideways while the page scrolls down -------------------------
+   Without script (or under reduced motion) the window scrolls sideways under the finger, card by card. With script
+   (.is-live) the section becomes as tall as the strip is long, its content pins to the screen, and src/main.js turns
+   the vertical scroll into the strip's sideways position (--x) and the progress line (--q). */
+.ip-range { position: relative; padding-block: clamp(32px, 5vw, 72px) clamp(40px, 6vw, 88px); }
+.ip-range__head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: clamp(18px, 2.6vw, 32px); }
+.ip-range__head .ip-link { white-space: nowrap; }
+.ip-range__window { overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; padding-block: 6px 30px; }
+.ip-range__window::-webkit-scrollbar { display: none; }
+.ip-range__track { display: flex; gap: clamp(14px, 2vw, 28px); width: max-content; padding-inline: max(var(--ip-gutter), calc((100vw - var(--ip-wrap)) / 2)); }
+.ip-range__foot { display: none; }
+
+.ip-piece { flex: none; width: min(84vw, 1060px); scroll-snap-align: center; }
+.ip-piece__card {
+  display: grid; grid-template-rows: auto 1fr; height: 100%; overflow: hidden;
+  padding: 10px; border-radius: var(--ip-radius-l); background: #fff;
+  box-shadow: inset 0 0 0 1px rgb(11 22 35 / 0.06), 0 30px 60px -38px rgb(22 48 77 / 0.55);
+}
+.ip-piece__media { display: block; overflow: hidden; border-radius: 20px; aspect-ratio: 5 / 4; background: var(--ip-mist); transition: transform 0.4s var(--ip-spring); }
+.ip-piece__media:active { transform: scale(0.98); transition-duration: 0.08s; }
+.ip-piece__media .ip-pic, .ip-piece__media img { width: 100%; height: 100%; }
+.ip-piece__media img { object-fit: cover; object-position: var(--fp); transition: transform 1.2s var(--ip-ease); }
+.ip-piece__body { display: grid; align-content: start; justify-items: start; gap: 10px; padding: 18px 10px 10px; }
+.ip-piece__name { font-size: clamp(1.9rem, 1.1rem + 2.6vw, 3.6rem); font-weight: 600; line-height: 1; letter-spacing: -0.034em; }
+.ip-piece__motto { font-size: clamp(1.15rem, 1rem + 0.7vw, 1.6rem); font-weight: 480; line-height: 1.28; letter-spacing: -0.014em; color: var(--ip-fjord); text-wrap: balance; }
+.ip-piece__text { display: none; color: var(--ip-slate); }
+.ip-piece__fact { font-size: 0.95rem; font-weight: 600; color: var(--ip-slate); }
+.ip-piece__go { margin-top: 6px; }
+@media (hover: hover) and (pointer: fine) { .ip-piece__card:hover .ip-piece__media img { transform: scale(1.04); } }
+@media (min-height: 760px) and (max-width: 899px) { .ip-piece__text { display: block; font-size: 0.98rem; line-height: 1.5; } }
+@media (min-width: 900px) {
+  .ip-piece { width: min(76vw, 1060px); }
+  .ip-piece__card { grid-template-rows: none; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: stretch; height: clamp(440px, 62svh, 620px); padding: 12px; }
+  .ip-piece__media { aspect-ratio: auto; height: 100%; }
+  .ip-piece__body { align-content: center; gap: 16px; padding: clamp(24px, 3.4vw, 56px); }
+  .ip-piece__text { display: block; max-width: 30rem; }
+  .ip-piece__go { margin-top: 10px; }
+}
+
+.js .ip-range.is-live { height: calc(100svh + var(--ip-run, 0px)); padding: 0; }
+.ip-range.is-live .ip-range__pin {
+  position: sticky; top: 0; height: 100svh; overflow: clip;
+  display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; padding-block: calc(var(--ip-bar-h) + 14px) 10px;
+}
+.ip-range.is-live .ip-range__window { overflow: clip; scroll-snap-type: none; }
+.ip-range.is-live .ip-range__track { transform: translate3d(var(--x, 0px), 0, 0); will-change: transform; }
+.ip-range.is-live .ip-range__foot { display: block; }
+.ip-range__bar { display: block; height: 2px; max-width: 240px; border-radius: 2px; background: rgb(11 22 35 / 0.12); overflow: hidden; }
+.ip-range__bar i { display: block; height: 100%; background: var(--ip-fjord); transform: scaleX(var(--q, 0)); transform-origin: left; }
+.ip[dir='rtl'] .ip-range__bar i { transform-origin: right; }
+@media (max-width: 899px) { .ip-range.is-live .ip-range__window { padding-block: 4px 16px; } }
+
+/* ---- night: the made-to-measure ice and the signature, on the black of their photographs ---------------------
+   The page darkens over a long gradient (dusk) rather than meeting the black on a line. */
+.ip-night {
+  --dusk: clamp(150px, 28svh, 320px);
+  position: relative; color: #fff;
+  padding-block: var(--dusk) clamp(56px, 8vw, 120px);
+  background: linear-gradient(to bottom, var(--ip-glacier) 0, #9fb7c6 calc(var(--dusk) * 0.28), #2a3a46 calc(var(--dusk) * 0.62), var(--ip-night) var(--dusk));
+}
+.ip-night :focus-visible { outline-color: var(--ip-frost); }
+.ip-scene { padding-block: clamp(36px, 6vw, 96px); }
+.ip-scene__grid { display: grid; gap: clamp(28px, 5vw, 88px); align-items: center; }
+.ip-scene__media { overflow: hidden; border-radius: var(--ip-radius-l); aspect-ratio: var(--ratio, 4 / 5); background: #000; }
+.ip-scene__media .ip-pic, .ip-scene__media img { width: 100%; height: 100%; }
+.ip-scene__media img { object-fit: cover; object-position: var(--fp); }
+.ip-scene__title { max-width: 14ch; font-size: clamp(2.4rem, 1.2rem + 3.8vw, 4.6rem); font-weight: 560; line-height: 1.02; letter-spacing: -0.032em; }
+.ip-scene .ip-lead { margin-top: clamp(18px, 2vw, 26px); color: rgb(255 255 255 / 0.8); }
+.ip-scene__body > p:not(.ip-lead) { margin-top: 1.1rem; color: rgb(255 255 255 / 0.64); }
+.ip-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 26px; margin-top: clamp(26px, 3vw, 38px); }
+.ip-night .ip-link { color: #fff; }
+.ip-night .ip-btn--primary { box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.55); }
+@media (min-width: 900px) {
+  .ip-scene__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); }
+  .ip-scene--flip .ip-scene__grid { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+  .ip-scene--flip .ip-scene__media { order: 2; }
+  .ip-scene--flip .ip-scene__media { width: min(100%, 560px); justify-self: end; }
+}
+
+/* the engagement film opens on the same black */
+.ip-reveal--night .ip-reveal__stage { background: var(--ip-night); }
+.ip-reveal--night .ip-reveal__title--page { color: rgb(255 255 255 / 0.92); }
+.ip-reveal--night .ip-reveal__title { max-width: 12ch; font-size: clamp(2.8rem, 1rem + 5.4vw, 6.6rem); line-height: 0.98; letter-spacing: -0.036em; }
+@media (max-width: 760px) { .ip-reveal--night .ip-reveal__title { max-width: 9ch; font-size: clamp(2.5rem, 0.8rem + 9vw, 3.6rem); } }
+.ip[lang='ar'] .ip-reveal--night .ip-reveal__title { line-height: 1.2; letter-spacing: 0; }
+
+/* ---- service: the film of the hand that serves, and the ice for bars and events -------------------------------- */
+.ip-service__grid { display: grid; gap: clamp(28px, 5vw, 88px); align-items: center; }
+.ip-service__film { position: relative; overflow: hidden; border-radius: var(--ip-radius-l); aspect-ratio: 4 / 3; background: var(--ip-mist); box-shadow: 0 30px 60px -38px rgb(22 48 77 / 0.55); }
+.ip-service__film video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; }
+.ip-film__toggle { position: absolute; z-index: 2; inset-inline-end: 14px; bottom: 14px; min-height: 44px; padding: 0 1.1em; border: 0; border-radius: 999px; color: var(--ip-ink); font-size: 0.9rem; font-weight: 600; background: rgb(255 255 255 / 0.8); -webkit-backdrop-filter: blur(14px) saturate(1.5); backdrop-filter: blur(14px) saturate(1.5); box-shadow: inset 0 0 0 1px rgb(11 22 35 / 0.14), 0 6px 20px rgb(11 22 35 / 0.12); transition: background-color 0.25s, transform 0.3s var(--ip-spring); }
+.ip-film__toggle:active { transform: scale(0.96); }
+@media (hover: hover) and (pointer: fine) { .ip-film__toggle:hover { background: #fff; } }
+.ip-rows { display: grid; }
+.ip-rows > li { border-bottom: 1px solid var(--ip-line); }
+.ip-rows > li:first-child { border-top: 1px solid var(--ip-line); }
+.ip-row { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding-block: 14px; transition: opacity 0.2s; }
+.ip-row:active { opacity: 0.6; transition-duration: 0s; }
+.ip-row__thumb { display: block; overflow: hidden; aspect-ratio: 1; border-radius: 14px; background: var(--ip-mist); }
+.ip-row__thumb .ip-pic, .ip-row__thumb img { width: 100%; height: 100%; }
+.ip-row__thumb img { object-fit: cover; object-position: var(--fp); transition: transform 1s var(--ip-ease); }
+.ip-row__text { display: grid; gap: 2px; min-width: 0; }
+.ip-row__name { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.018em; line-height: 1.2; }
+.ip-row__desc { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; font-size: 0.93rem; line-height: 1.45; color: var(--ip-slate); }
+.ip-row__fact { font-size: 0.9rem; font-weight: 600; color: var(--ip-fjord); }
+@media (hover: hover) and (pointer: fine) {
+  .ip-row:hover .ip-row__thumb img { transform: scale(1.06); }
+  .ip-row:hover .ip-row__go .ip-icon--dir { transform: translateX(3px); }
+  .ip[dir='rtl'] .ip-row:hover .ip-row__go .ip-icon--dir { transform: scaleX(-1) translateX(3px); }
+}
+.ip-deliver { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; margin-top: clamp(22px, 3vw, 34px); }
+.ip-deliver .ip-btn { flex: 1 1 100%; }
+@media (min-width: 640px) { .ip-deliver .ip-btn { flex: 0 0 auto; } }
+@media (min-width: 900px) {
+  .ip-service__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); }
+  .ip-service__film { aspect-ratio: 5 / 6; }
+  .ip-row { grid-template-columns: 96px minmax(0, 1fr) auto; gap: 20px; }
+}
+
+/* ---- the bar over a night set: white, with a dark haze -------------------------------------------------------- */
+.ip-header[data-over='night']:not(:has(:focus-visible), .is-open) {
+  --fg: #fff;
+  --fg-soft: rgb(255 255 255 / 0.9);
+  --fg-inv: var(--ip-ink);
+  --pill: rgb(255 255 255 / 0.14);
+  --pill-on: rgb(255 255 255 / 0.2);
+  --logo-color: none;
+  --logo-white: block;
+}
+.ip-header[data-over='night']::before { background: linear-gradient(rgb(4 8 12 / 0.88), rgb(4 8 12 / 0)); }
+@media (hover: hover) and (pointer: fine) {
+  .ip-header[data-over='night']:hover {
+    --fg: var(--ip-ink);
+    --fg-soft: rgb(11 22 35 / 0.86);
+    --fg-inv: #fff;
+    --pill: rgb(11 22 35 / 0.06);
+    --pill-on: rgb(11 22 35 / 0.09);
+    --logo-color: block;
+    --logo-white: none;
+  }
+}
+
 /* ---- right-to-left (Arabic) --------------------------------------------------------------------------------- */
 .ip[lang='ar'] { font-size: 1.125rem; line-height: 1.75; }
 .ip[lang='ar'] * { letter-spacing: 0 !important; }
@@ -1214,17 +1367,17 @@ html.lenis, html.lenis body { height: auto; }
   .ip *, .ip *::before, .ip *::after { animation: none !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
   .js [data-reveal] { opacity: 1; transform: none; }
   .ip-sheet__nav a { transform: none; }
-  .ip-card:hover img, .ip-tile__link:hover img { transform: none; }
+  .ip-card:hover img, .ip-tile:hover .ip-tile__media img, .ip-row:hover img { transform: none; }
 }
 @media (prefers-reduced-transparency: reduce) {
-  .ip-header { --bar-bg: #f5f9fc; --bar-filter: none; }
-  .ip-header.is-top:not(:has(:focus-visible), .is-open) { --bar-bg: rgb(245 249 252 / 0); }
-  .ip-card__label, .ip-buybar, .ip-sheet { background: #f5f9fc; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .ip-header { --bar-bg: #e3f1fa; --bar-filter: none; }
+  .ip-header.is-top:not(:has(:focus-visible), .is-open) { --bar-bg: rgb(227 241 250 / 0); }
+  .ip-card__label, .ip-buybar, .ip-sheet { background: #e3f1fa; -webkit-backdrop-filter: none; backdrop-filter: none; }
   .ip-btn--glass { background: rgb(22 48 77 / 0.85); -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 @media (prefers-contrast: more) {
   .ip { --ip-line: rgb(11 22 35 / 0.45); --ip-slate: #2f3d4d; }
-  .ip-header { --bar-bg: rgb(245 249 252 / 0.94); }
+  .ip-header { --bar-bg: rgb(227 241 250 / 0.94); }
   .ip-field input, .ip-field textarea { box-shadow: inset 0 0 0 2px var(--ip-ink); }
 }
 @media (forced-colors: active) {

@@ -1,6 +1,6 @@
 {
   "nav": {
-    "shop": "Boutique"
+    "shop": "Nos glaçons"
   },
   "ui": {
     "cart": "Panier",
@@ -126,7 +126,7 @@
       "stepOf": "Étape {n} sur {total}",
       "summary": "Récapitulatif",
       "empty": "Votre panier est vide.",
-      "emptyLead": "Parcourez la boutique pour ajouter des glaçons à votre commande.",
+      "emptyLead": "Parcourez nos glaçons pour en ajouter à votre commande.",
       "continue": "Continuer mes achats",
       "checkout": "Passer la commande",
       "remove": "Retirer",
@@ -275,7 +275,7 @@
       "proBadge": "Compte professionnel : tarifs en cours de validation",
       "orders": "Mes commandes",
       "ordersEmpty": "Vous n’avez pas encore de commande.",
-      "ordersCta": "Voir la boutique",
+      "ordersCta": "Voir nos glaçons",
       "cols": {
         "ref": "Commande",
         "date": "Date",

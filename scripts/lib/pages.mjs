@@ -2,8 +2,8 @@
 // All class names are prefixed `ip-` so the same markup and CSS can be pasted into an Odoo page.
 import { esc, md, waLink, picture, pictureResponsive } from './html.mjs';
 import { icon } from './icons.mjs';
-import { PRODUCT_IDS, FEATURED_IDS, MORE_IDS, urlFor } from './routes.mjs';
-import { CARD_IMAGE, PAGE_IMAGE } from './catalog.mjs';
+import { PRODUCT_IDS, REDIRECTS, shopProductOf, urlFor } from './routes.mjs';
+import { CARD_IMAGE, PAGE_IMAGE, productInfo } from './catalog.mjs';
 import * as shopPages from './shop-pages.mjs';
 
 const alt = (ctx, id) => ctx.c.alt[id] ?? '';
@@ -18,24 +18,9 @@ function card(ctx, id, { sizes }) {
   const p = ctx.c.products[id];
   const img = CARD_IMAGE[id];
   return `<li class="ip-card">
-      <a class="ip-card__link" href="${urlFor(id, ctx.lang)}">
+      <a class="ip-card__link" href="${urlFor(`shop-${id}`, ctx.lang)}">
         ${picture(ctx, img, { alt: alt(ctx, img), sizes })}
         <span class="ip-card__label"><span class="ip-card__name">${esc(p.card)}</span><span class="ip-card__go">${icon('arrow')}</span></span>
-      </a>
-    </li>`;
-}
-
-function tile(ctx, id) {
-  const p = ctx.c.products[id];
-  const img = CARD_IMAGE[id];
-  return `<li class="ip-tile">
-      <a class="ip-tile__link" href="${urlFor(id, ctx.lang)}">
-        <span class="ip-tile__media">${picture(ctx, img, { alt: alt(ctx, img), sizes: '(min-width: 1000px) 22vw, (min-width: 640px) 45vw, 120px' })}</span>
-        <span class="ip-tile__body">
-          <span class="ip-tile__name">${esc(p.card)}</span>
-          <span class="ip-tile__desc">${md(ctx, p.paras[0])}</span>
-          <span class="ip-tile__go">${icon('arrow')}</span>
-        </span>
       </a>
     </li>`;
 }
@@ -143,9 +128,9 @@ function saga(ctx, { id, title, text, name, label }) {
  * visitor scrolls, and the title is revealed with it (an ink copy on the page, a white copy on the video,
  * cut by the same window). Without script or under reduced motion it is a plain full-bleed band.
  */
-function reveal(ctx, { id, title, text, link, name, label }) {
+function reveal(ctx, { id, title, text, link, name, label, night = false }) {
   const { c } = ctx;
-  return `<section class="ip-reveal" data-ip-reveal data-ip-video aria-labelledby="${id}">
+  return `<section class="ip-reveal${night ? ' ip-reveal--night' : ''}" data-set="${night ? 'night' : 'sun'}" data-ip-reveal data-ip-video aria-labelledby="${id}">
       <div class="ip-reveal__stage">
         <p class="ip-reveal__title ip-reveal__title--page" aria-hidden="true">${esc(title)}</p>
         <div class="ip-reveal__media">
@@ -245,7 +230,7 @@ function instagram(ctx) {
   const tiles = [1, 2, 3, 4, 5]
     .map((i) => `<li><a class="ip-insta__tile" href="${site.instagramUrl}" ${external}>${picture(ctx, `insta-${i}`, { alt: alt(ctx, `insta-${i}`), sizes: '(min-width: 900px) 330px, 46vw' })}</a></li>`)
     .join('');
-  return `<section class="ip-section ip-insta" aria-labelledby="h-insta">
+  return `<section class="ip-section ip-insta" data-set="sun" aria-labelledby="h-insta">
       <div class="ip-wrap ip-insta__wrap" data-reveal>
         <div class="ip-insta__head">
           <h2 id="h-insta">${esc(c.home.instagram.title)}</h2>
@@ -257,15 +242,123 @@ function instagram(ctx) {
     </section>`;
 }
 
-// ---------------------------------------------------------------- pages
+// ---------------------------------------------------------------- home
+
+/** The three clear shapes shown on the home page, each on one of the company's own photographs (blue paper, real light). */
+const PIECE_IMAGE = { 'cube-xl': 'cube-sun', 'ice-stick': 'stick-sun', 'moon-ball': 'ball-sun' };
+const PIECES = Object.keys(PIECE_IMAGE);
+const productUrl = (ctx, id) => urlFor(`shop-${id}`, ctx.lang);
+/** What the product sheet says that matters on a card, as one line: "Packs de 20 unités · 36 g la pièce". */
+const facts = (ctx, id) => ctx.c.products[id].specs
+  .filter(([key]) => ['pack', 'size', 'minimum', 'material'].includes(key))
+  .map(([key, value]) => (key === 'minimum' ? `${ctx.c.specLabels.minimum} : ${value}` : value))
+  .join(' · ');
+
+/** One card of the horizontal strip: the photograph on one side, the name, the company's own line and the facts on the other. */
+function piece(ctx, id) {
+  const { c } = ctx;
+  const p = c.products[id];
+  const url = productUrl(ctx, id);
+  const fact = facts(ctx, id);
+  return `<li class="ip-piece">
+        <article class="ip-piece__card">
+          <a class="ip-piece__media" href="${url}" tabindex="-1" aria-hidden="true">${picture(ctx, PIECE_IMAGE[id], { alt: alt(ctx, PIECE_IMAGE[id]), sizes: '(min-width: 900px) 34vw, 84vw' })}</a>
+          <div class="ip-piece__body">
+            <h3 class="ip-piece__name"><a href="${url}">${md(ctx, p.h1)}</a></h3>
+            <p class="ip-piece__motto">${md(ctx, c.v8.product[id])}</p>
+            <p class="ip-piece__text">${md(ctx, p.paras[0])}</p>
+            ${fact ? `<p class="ip-piece__fact">${md(ctx, fact)}</p>` : ''}
+            <a class="ip-btn ip-btn--dark ip-piece__go" href="${url}"><span>${esc(c.v8.ui.seeProduct)}</span>${icon('arrow')}</a>
+          </div>
+        </article>
+      </li>`;
+}
+
+/**
+ * The three clear shapes as a horizontal strip driven by the vertical scroll: the section pins, the strip slides sideways
+ * (to the left in Arabic) while the visitor keeps scrolling down, then the page carries on. Without script or under reduced
+ * motion it is a strip the finger or the trackpad slides.
+ */
+function range(ctx) {
+  const { c, lang } = ctx;
+  return `<section class="ip-range" id="nos-glacons" data-set="sun" data-ip-hscroll aria-labelledby="h-ice">
+      <div class="ip-range__pin">
+        <div class="ip-wrap ip-range__head">
+          <h2 id="h-ice">${esc(c.home.productsTitle)}</h2>
+          <a class="ip-link" href="${urlFor('shop', lang)}"><span>${esc(c.ui.seeAll)}</span>${icon('arrow')}</a>
+        </div>
+        <div class="ip-range__window" data-ip-window>
+          <ul class="ip-range__track" data-ip-track>${PIECES.map((id) => piece(ctx, id)).join('')}</ul>
+        </div>
+        <div class="ip-wrap ip-range__foot" aria-hidden="true"><span class="ip-range__bar"><i data-ip-bar></i></span></div>
+      </div>
+    </section>`;
+}
+
+/** Picture on one side, words on the other (the made-to-measure ice and the signature, on the black of their photographs). */
+function scene(ctx, { id, image, ratio = '4 / 5', title, lead, body = '', flip = false }) {
+  return `<section class="ip-scene${flip ? ' ip-scene--flip' : ''}" aria-labelledby="${id}">
+      <div class="ip-wrap ip-scene__grid">
+        <figure class="ip-scene__media" style="--ratio:${ratio}" data-reveal>${picture(ctx, image, { alt: alt(ctx, image), sizes: '(min-width: 900px) 44vw, 92vw' })}</figure>
+        <div class="ip-scene__body" data-reveal>
+          <h2 class="ip-scene__title" id="${id}">${md(ctx, title)}</h2>
+          ${lead ? `<p class="ip-lead">${md(ctx, lead)}</p>` : ''}
+          ${body}
+        </div>
+      </div>
+    </section>`;
+}
+
+/** The rest of the range for bars and events, as a plain list: small photograph, name, what it is for, the figure that matters. */
+const SERVICE_IDS = ['gourmet-ice', 'crushed-ice', 'dry-ice', 'ice-slab'];
+function row(ctx, id) {
+  const { c } = ctx;
+  const p = c.products[id];
+  const fact = facts(ctx, id) || (ctx.shop.products[id].mode === 'quote' ? c.shop.buy.quoteOnly : '');
+  return `<li>
+          <a class="ip-row" href="${productUrl(ctx, id)}">
+            <span class="ip-row__thumb">${picture(ctx, CARD_IMAGE[id], { alt: '', sizes: '(min-width: 900px) 120px, 88px' })}</span>
+            <span class="ip-row__text">
+              <span class="ip-row__name">${md(ctx, p.h1)}</span>
+              <span class="ip-row__desc">${md(ctx, p.paras[0])}</span>
+              ${fact ? `<span class="ip-row__fact">${md(ctx, fact)}</span>` : ''}
+            </span>
+            <span class="ip-row__go">${icon('arrow')}</span>
+          </a>
+        </li>`;
+}
+
+/** Service: the film of the hand that serves (tongs, a glass), beside the ice made for bars and events. */
+function service(ctx) {
+  const { c, lang } = ctx;
+  return `<section class="ip-section ip-service" data-set="sun" aria-labelledby="h-service">
+      <div class="ip-wrap ip-service__grid">
+        <div class="ip-service__film" data-ip-video data-reveal>
+          <video muted loop playsinline preload="none" poster="/media/story-3-poster.jpg" aria-label="${esc(c.v8.ui.serviceVideo)}">
+            <source src="/media/story-3.mp4" type="video/mp4">
+            <source src="/media/story-3.webm" type="video/webm">
+          </video>
+          <button class="ip-film__toggle" type="button" data-ip-video-toggle aria-pressed="false" data-pause="${esc(c.ui.videoPause)}" data-play="${esc(c.ui.videoPlay)}"><span data-label>${esc(c.ui.videoPause)}</span></button>
+        </div>
+        <div class="ip-service__body">
+          <div class="ip-sectionhead" data-reveal><h2 id="h-service">${esc(c.v8.ui.service)}</h2></div>
+          <ul class="ip-rows" data-reveal>${SERVICE_IDS.map((id) => row(ctx, id)).join('')}</ul>
+          <div class="ip-deliver" data-reveal>
+            <p class="ip-fact">${icon('check')}<span>${md(ctx, c.home.pro.fact)}</span></p>
+            <a class="ip-btn ip-btn--primary ip-btn--lg" href="${urlFor('shop', lang)}">${icon('bag')}<span>${esc(c.ui.shopOrder)}</span></a>
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
 
 export function home(ctx) {
   const { c, lang } = ctx;
   const h = c.home;
-  const cardSizesTall = '(min-width: 1000px) 24vw, (min-width: 640px) 36vw, 74vw';
-  const cardSizesWide = '(min-width: 1000px) 24vw, 44vw';
+  const v = c.v8;
+  const stamp = c.products['ice-stamp'];
   return `
-    <section class="ip-hero">
+    <section class="ip-hero" data-set="photo">
       <div class="ip-hero__media">${pictureResponsive(ctx, 'hero', 'hero-tall', { alt: alt(ctx, 'hero'), priority: true, sizes: '100vw' })}</div>
       <div class="ip-hero__shade" aria-hidden="true"></div>
       <div class="ip-hero__veil" aria-hidden="true"></div>
@@ -280,29 +373,37 @@ export function home(ctx) {
       ${dissolve()}
     </section>
 
-    <section class="ip-section ip-intro">
+    <section class="ip-section ip-intro" data-set="sun">
       <div class="ip-wrap"><p class="ip-intro__text" data-reveal>${md(ctx, h.intro)}</p></div>
     </section>
 
-    ${reveal(ctx, { id: 'h-craft', title: h.savoir.title, text: h.savoir.text, link: h.savoir.link, name: 'ice-hero', label: c.ui.videoLabel })}
+    ${range(ctx)}
 
-    <section class="ip-section ip-ice" id="nos-glacons" aria-labelledby="h-ice">
-      <div class="ip-wrap">
-        <div class="ip-sectionhead" data-reveal>
-          <h2 id="h-ice">${esc(h.productsTitle)}</h2>
-          <a class="ip-link" href="${urlFor('glacons', lang)}"><span>${esc(c.ui.seeAll)}</span>${icon('arrow')}</a>
-        </div>
-      </div>
-      <ul class="ip-rail" data-reveal>${FEATURED_IDS.map((id) => card(ctx, id, { sizes: cardSizesTall })).join('')}</ul>
-      <div class="ip-wrap">
-        <ul class="ip-grid ip-grid--more" style="--cols:${Math.min(MORE_IDS.length, 5)}" data-reveal>${MORE_IDS.map((id) => card(ctx, id, { sizes: cardSizesWide })).join('')}</ul>
-      </div>
-    </section>
+    <div class="ip-night" data-set="night">
+      ${scene(ctx, {
+        id: 'h-custom', image: 'white-rose', title: v.product['custom-ice'], lead: v.lines.inclusions,
+        body: `<div class="ip-actions">
+            <a class="ip-btn ip-btn--primary ip-btn--lg" href="${quoteUrl(ctx)}"><span>${esc(c.shop.buy.requestQuote)}</span>${icon('arrow')}</a>
+            <a class="ip-link" href="${productUrl(ctx, 'custom-ice')}"><span>${md(ctx, c.products['custom-ice'].h1)}</span>${icon('arrow')}</a>
+          </div>`,
+      })}
+      ${scene(ctx, {
+        id: 'h-sign', image: 'cube-glove', ratio: '1 / 1', flip: true, title: v.lines.signature, lead: v.lines.signatureText,
+        body: `<p>${md(ctx, stamp.paras[1])}</p>
+          <div class="ip-actions">
+            <a class="ip-btn ip-btn--primary ip-btn--lg" href="${productUrl(ctx, 'ice-stamp')}"><span>${md(ctx, stamp.h1)}</span>${icon('arrow')}</a>
+            <a class="ip-link" href="${quoteUrl(ctx)}"><span>${esc(c.shop.buy.requestQuote)}</span>${icon('arrow')}</a>
+          </div>`,
+      })}
+    </div>
 
+    ${reveal(ctx, { id: 'h-craft', title: v.lines.craft, text: h.savoir.text, link: h.savoir.link, name: 'ice-hero', label: c.ui.videoLabel, night: true })}
+
+    ${service(ctx)}
 
     ${instagram(ctx)}
 
-    <section class="ip-section ip-contact" id="contact" aria-labelledby="h-contact">
+    <section class="ip-section ip-contact" id="contact" data-set="sun" aria-labelledby="h-contact">
       <div class="ip-wrap ip-contact__grid">
         <div class="ip-contact__intro" data-reveal>
           <h2 id="h-contact">${esc(h.contact.title)}</h2>
@@ -314,19 +415,83 @@ export function home(ctx) {
     </section>`;
 }
 
+// ---------------------------------------------------------------- "Nos glaçons": the range and the shop in one window
+
+/** A card of the range that also sells: photograph, name, what it is for, price, and the one action that fits the product. */
+function rangeTile(ctx, id) {
+  const { c } = ctx;
+  const t = c.shop;
+  const p = c.products[id];
+  const info = productInfo(ctx, id);
+  const img = CARD_IMAGE[id];
+  const price = info.mode === 'quote'
+    ? `<span class="ip-buy__badge">${esc(t.buy.quoteOnly)}</span>`
+    : `${shopPages.priceTag(ctx, info.price)}${info.unit ? `<span class="ip-tile__unit">/ ${esc(info.unit)}</span>` : ''}`;
+  let action;
+  if (info.mode === 'quote') {
+    action = `<a class="ip-btn ip-btn--ghost ip-btn--sm" href="${quoteUrl(ctx)}"><span>${esc(t.buy.requestQuote)}</span></a>`;
+  } else if (info.option || info.min > 1) {
+    action = `<a class="ip-btn ip-btn--ghost ip-btn--sm" href="${info.href}"><span>${esc(t.buy.chooseOptions)}</span>${icon('arrow')}</a>`;
+  } else {
+    action = `<button class="ip-btn ip-btn--primary ip-btn--sm" type="button" data-ip-quick="${id}" aria-label="${esc(`${t.buy.add} : ${p.card}`)}">${icon('bag')}<span>${esc(t.buy.add)}</span></button>`;
+  }
+  return `<li class="ip-tile" data-cat="${info.category}">
+        <a class="ip-tile__media" href="${info.href}" tabindex="-1" aria-hidden="true">${picture(ctx, img, { alt: alt(ctx, img), sizes: '(min-width: 1000px) 26vw, (min-width: 640px) 45vw, 112px' })}</a>
+        <div class="ip-tile__body">
+          <h2 class="ip-tile__name"><a href="${info.href}">${esc(p.card)}</a></h2>
+          <p class="ip-tile__desc">${md(ctx, p.paras[0])}</p>
+          <div class="ip-tile__buy">
+            <p class="ip-tile__price">${price}</p>
+            ${action}
+          </div>
+        </div>
+      </li>`;
+}
+
 export function glacons(ctx) {
   const { c } = ctx;
+  const t = c.shop;
+  const vision = c.about.sections[1];
+  const chips = [
+    `<button class="ip-chip" type="button" data-ip-filter="" aria-pressed="true">${esc(t.list.all)}</button>`,
+    ...ctx.shop.categories.map((cat) => `<button class="ip-chip" type="button" data-ip-filter="${cat.id}" aria-pressed="false">${esc(t.list.categories[cat.id])}</button>`),
+  ].join('');
   return `
     ${splitHead(ctx, { image: 'cube-xl-photo', title: c.glacons.title, lead: c.glacons.lead })}
-    <section class="ip-section ip-section--tight">
-      <div class="ip-wrap"><ul class="ip-tiles">${PRODUCT_IDS.map((id) => tile(ctx, id)).join('')}</ul></div>
+    <section class="ip-section ip-section--tight ip-shop" data-ip-shop="list">
+      <div class="ip-wrap">
+        ${shopPages.demoNote(ctx)}
+        <div class="ip-chips" role="group" aria-label="${esc(t.list.filters)}">${chips}</div>
+        <ul class="ip-tiles" data-ip-grid>${PRODUCT_IDS.map((id) => rangeTile(ctx, id)).join('')}</ul>
+      </div>
     </section>
-    ${shopPages.pointerBand(ctx)}`;
+    <section class="ip-section ip-about ip-vision" aria-labelledby="h-vision">
+      <div class="ip-wrap ip-about__split ip-about__split--flip">
+        <div class="ip-about__media" data-reveal>${picture(ctx, 'berry', { alt: alt(ctx, 'berry'), sizes: '(min-width: 900px) 40vw, 92vw' })}</div>
+        <div class="ip-about__body" data-reveal>
+          <h2 id="h-vision">${esc(vision.title)}</h2>
+          <p class="ip-lead">${md(ctx, vision.paras[0])}</p>
+          ${vision.paras.slice(1).map((p) => `<p>${md(ctx, p)}</p>`).join('')}
+        </div>
+      </div>
+    </section>
+    <section class="ip-section ip-cta">
+      <div class="ip-wrap ip-cta__inner">
+        <h2 class="ip-cta__title">${esc(t.list.quoteTitle)}</h2>
+        <div class="ip-cta__actions">
+          <a class="ip-btn ip-btn--primary ip-btn--lg" href="${quoteUrl(ctx)}"><span>${esc(t.buy.requestQuote)}</span>${icon('arrow')}</a>
+          <a class="ip-btn ip-btn--ghost ip-btn--lg" href="${waLink(ctx, c.wa.generic)}" ${external}>${icon('whatsapp')}<span>${esc(c.ui.whatsapp)}</span></a>
+        </div>
+      </div>
+    </section>
+    ${shopPages.shopData(ctx)}`;
 }
+
+// ---------------------------------------------------------------- product page: presents and sells
 
 export function product(ctx, page) {
   const { c, lang } = ctx;
-  const id = page.id;
+  const id = shopProductOf(page.id);
   const p = c.products[id];
   const img = PAGE_IMAGE[id];
   const at = PRODUCT_IDS.indexOf(id);
@@ -342,11 +507,12 @@ export function product(ctx, page) {
         <div class="ip-product__media">${picture(ctx, img, { alt: alt(ctx, img), priority: true, sizes: '(min-width: 900px) 46vw, 100vw' })}</div>
         <div class="ip-product__body">
           <nav class="ip-crumbs" aria-label="${esc(c.nav.glacons)}">
-            <a href="${urlFor('home', lang)}">${esc(c.ui.home)}</a><span aria-hidden="true">/</span><a href="${urlFor('glacons', lang)}">${esc(c.ui.ice)}</a>
+            <a href="${urlFor('home', lang)}">${esc(c.ui.home)}</a><span aria-hidden="true">/</span><a href="${urlFor('shop', lang)}">${esc(c.nav.glacons)}</a>
           </nav>
+          ${shopPages.demoNote(ctx)}
           <h1 class="ip-product__title">${md(ctx, p.h1)}</h1>
           <p class="ip-lead">${md(ctx, p.paras[0])}</p>
-          ${shopPages.pointer(ctx, id)}
+          ${shopPages.buyBox(ctx, id)}
           ${p.paras.slice(1).map((t) => `<p>${md(ctx, t)}</p>`).join('')}
           ${specs}
         </div>
@@ -356,7 +522,8 @@ export function product(ctx, page) {
       <div class="ip-wrap"><div class="ip-sectionhead"><h2 id="h-related">${esc(c.ui.related)}</h2></div></div>
       <ul class="ip-rail ip-rail--related">${related.map((r) => card(ctx, r, { sizes: '(min-width: 1000px) 24vw, 70vw' })).join('')}</ul>
     </section>
-    ${shopPages.pointerBar(ctx, id)}`;
+    ${shopPages.buyBar(ctx, id)}
+    ${shopPages.shopData(ctx, { ids: [id] })}`;
 }
 
 export function savoir(ctx) {
@@ -365,29 +532,6 @@ export function savoir(ctx) {
   return `
     ${splitHead(ctx, { image: 'ice-stick-photo', title: s.title, lead: s.paras })}
     ${saga(ctx, { id: 'h-art', title: s.artTitle, text: s.artText, name: 'ice-whisky', label: c.ui.videoLabelGlass })}
-    ${ctaBand(ctx)}`;
-}
-
-/** One photograph per About section: the craft (the company's own photo), then the range. */
-const ABOUT_IMAGES = ['about-art', 'hero'];
-
-export function about(ctx) {
-  const { c } = ctx;
-  const a = c.about;
-  return `
-    ${pageHead(ctx, { title: a.title, soft: true })}
-    ${a.sections
-      .map((sec, i) => `<section class="ip-section ip-section--tight ip-about">
-      <div class="ip-wrap ip-about__split${i % 2 ? ' ip-about__split--flip' : ''}">
-        <div class="ip-about__media" data-reveal>${picture(ctx, ABOUT_IMAGES[i], { alt: alt(ctx, ABOUT_IMAGES[i]), sizes: '(min-width: 900px) 40vw, 92vw' })}</div>
-        <div class="ip-about__body" data-reveal>
-          <h2>${esc(sec.title)}</h2>
-          <p class="ip-lead">${md(ctx, sec.paras[0])}</p>
-          ${sec.paras.slice(1).map((t) => `<p>${md(ctx, t)}</p>`).join('')}
-        </div>
-      </div>
-    </section>`)
-      .join('')}
     ${ctaBand(ctx)}`;
 }
 
@@ -430,11 +574,14 @@ export function notFound(ctx) {
     </section>`;
 }
 
+/** Former addresses: the layout turns these into redirect pages, so nothing is rendered here. */
+const moved = () => '';
+
 export const RENDERERS = {
-  home, glacons, savoir, about, contact,
+  home, savoir, contact,
   privacy: legal, terms: legal, cgv: legal, notFound,
-  shop: shopPages.shop, ...Object.fromEntries(PRODUCT_IDS.map((id) => [`shop-${id}`, shopPages.shopProduct])), cart: shopPages.cart, checkout: shopPages.checkout, payment: shopPages.payment,
+  shop: glacons, ...Object.fromEntries(PRODUCT_IDS.map((id) => [`shop-${id}`, product])), cart: shopPages.cart, checkout: shopPages.checkout, payment: shopPages.payment,
   simulate: shopPages.simulate, confirmation: shopPages.confirmation,
   login: shopPages.login, signup: shopPages.signup, account: shopPages.account,
-  ...Object.fromEntries(PRODUCT_IDS.map((id) => [id, product])),
+  ...Object.fromEntries(Object.keys(REDIRECTS).map((id) => [id, moved])),
 };

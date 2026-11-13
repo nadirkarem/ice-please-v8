@@ -2,7 +2,7 @@
 // Run with `npm run images`. Output: public/img/*, public/brand/*, content/images.manifest.json
 // Sources stay untouched in export-odoo/; every image is only cropped by CSS (focal point),
 // resized (never enlarged) and re-encoded as AVIF + WebP.
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import sharp from 'sharp';
 
@@ -27,7 +27,11 @@ const IMAGES = {
   'ice-stamp': { file: '18392-c5efe610/ChatGPT Image 25 mai 2026, 20_07_48.png', widths: [360, 640, 1086], focal: '50% 52%' },
 };
 
-const manifest = {};
+// Version 8: six photographs come ready-made from the V7 (the company's own pictures, already cut to every width):
+// cube-sun, stick-sun, ball-sun, white-rose, cube-glove, berry. Their entries are kept when this script rewrites the manifest.
+const KEPT = ['cube-sun', 'stick-sun', 'ball-sun', 'white-rose', 'cube-glove', 'berry'];
+const previous = JSON.parse(await readFile(resolve(root, 'content/images.manifest.json'), 'utf8').catch(() => '{}'));
+const manifest = Object.fromEntries(KEPT.filter((id) => previous[id]).map((id) => [id, previous[id]]));
 await mkdir(out('img'), { recursive: true });
 await mkdir(out('brand'), { recursive: true });
 

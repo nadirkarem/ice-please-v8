@@ -1,7 +1,7 @@
 // Entry point used by vite.config.js and scripts/odoo-pack.mjs: lists and renders every page.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { LANGS, ROUTES, PRIVATE_IDS, pageUrl, fileFor } from './routes.mjs';
+import { LANGS, ROUTES, PRIVATE_IDS, REDIRECTS, pageUrl, fileFor } from './routes.mjs';
 import { layout, makeCtx } from './layout.mjs';
 import { RENDERERS } from './pages.mjs';
 
@@ -55,7 +55,7 @@ export function renderPage(page, options = {}) {
 export function buildSitemap() {
   const { site } = loadContent();
   const urls = listPages()
-    .filter((p) => p.id !== 'notFound' && !PRIVATE_IDS.includes(p.id))
+    .filter((p) => p.id !== 'notFound' && !PRIVATE_IDS.includes(p.id) && !REDIRECTS[p.id])
     .map((p) => {
       const alternates = LANGS.filter((l) => ROUTES[p.id][l] !== undefined);
       const links = alternates.length > 1

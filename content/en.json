@@ -243,7 +243,13 @@
     "insta-4": "A whisky glass with an ice sphere, in daylight",
     "insta-5": "Ice cube containing a rose, held with tongs above a glass, on a black background",
     "about-art": "Crystal clear ice cube engraved “Ice Please!” held in a black glove, on a black background",
-    "ice-slab": "A chef arranges slices of raw fish on a large transparent slab of ice at an evening reception"
+    "ice-slab": "A chef arranges slices of raw fish on a large transparent slab of ice at an evening reception",
+    "cube-sun": "Clear ice cube on a blue ground, its shadow crossed by light",
+    "stick-sun": "Long clear piece of ice standing on a blue surface, against a black background",
+    "ball-sun": "Clear ice sphere resting on a blue ground",
+    "white-rose": "White rose set in a long clear piece of ice, in a tall glass, on a black background",
+    "cube-glove": "Ice cube engraved “Ice Please!” held in a black glove, on a black background",
+    "berry": "Blackberry resting on an ice cube in a pink cocktail, on a blue background"
   },
   "specLabels": {
     "pack": "Packaging",
@@ -410,6 +416,28 @@
           "Individual stamp or imprint tray"
         ]
       ]
+    }
+  },
+  "v8": {
+    "lines": {
+      "craft": "Handled with precision. Served to perfection.",
+      "inclusions": "With our made-to-measure inclusions, each piece of ice becomes a strong visual detail: flowers, fruit, patterns or personalised elements, designed to elevate your cocktails, events and exceptional moments.",
+      "signature": "The signature begins in the ice.",
+      "signatureText": "Cube XL or Ice Stick, each piece is shaped with precision to carry the identity of your venue."
+    },
+    "product": {
+      "cube-xl": "When the ice becomes the centrepiece of the glass.",
+      "ice-stick": "A simple stick, an exceptional ice.",
+      "moon-ball": "Moon Ball, the ice that draws you in by its gravity.",
+      "custom-ice": "Create ice in your own image."
+    },
+    "ui": {
+      "seeProduct": "View product",
+      "redirect": "This page has moved.",
+      "follow": "Continue",
+      "serviceVideo": "Computer-generated render: tongs place a clear ice cube in a glass.",
+      "rangeCount": "{n} of {total}",
+      "service": "For service"
     }
   }
 }

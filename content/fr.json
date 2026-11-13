@@ -243,7 +243,13 @@
     "insta-4": "Verre de whisky avec une sphère de glace, à la lumière du jour",
     "insta-5": "Glaçon contenant une rose, tenu par une pince au-dessus d’un verre, sur fond noir",
     "about-art": "Glaçon cristallin gravé « Ice Please! » tenu dans un gant noir, sur fond noir",
-    "ice-slab": "Un chef dispose des tranches de poisson cru sur une grande plaque de glace transparente, lors d’une réception de nuit"
+    "ice-slab": "Un chef dispose des tranches de poisson cru sur une grande plaque de glace transparente, lors d’une réception de nuit",
+    "cube-sun": "Cube de glace transparent sur fond bleu, avec son ombre traversée de lumière",
+    "stick-sun": "Long glaçon transparent debout sur une surface bleue, devant un fond noir",
+    "ball-sun": "Sphère de glace transparente posée sur un fond bleu",
+    "white-rose": "Rose blanche prise dans un long glaçon transparent, dans un verre haut, sur fond noir",
+    "cube-glove": "Glaçon gravé « Ice Please! » tenu dans un gant noir, sur fond noir",
+    "berry": "Mûre posée sur un cube de glace dans un cocktail rosé, sur fond bleu"
   },
   "specLabels": {
     "pack": "Conditionnement",
@@ -410,6 +416,28 @@
           "Tampon individuel ou plateau à empreintes"
         ]
       ]
+    }
+  },
+  "v8": {
+    "lines": {
+      "craft": "Manipulé avec précision. Servi avec perfection.",
+      "inclusions": "Avec nos inclusions sur mesure, chaque glaçon devient un détail visuel fort : fleurs, fruits, motifs ou éléments personnalisés, pensés pour sublimer vos cocktails, événements et moments d’exception.",
+      "signature": "La signature commence dans la glace.",
+      "signatureText": "Cube XL ou Ice Stick, chaque pièce est façonnée avec précision pour porter l’identité de votre établissement."
+    },
+    "product": {
+      "cube-xl": "Quand le glaçon devient la pièce maîtresse du verre.",
+      "ice-stick": "Un simple stick, mais une glace d’exception.",
+      "moon-ball": "Moon Ball, le glaçon qui attire par sa gravité.",
+      "custom-ice": "Créez vos glaçons à votre image."
+    },
+    "ui": {
+      "seeProduct": "Voir le produit",
+      "redirect": "Cette page a changé d’adresse.",
+      "follow": "Continuer",
+      "serviceVideo": "Rendu de synthèse : une pince dépose un cube de glace transparent dans un verre.",
+      "rangeCount": "{n} sur {total}",
+      "service": "Pour le service"
     }
   }
 }

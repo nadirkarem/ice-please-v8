@@ -12,6 +12,11 @@
 //  - a layout patch: the same header and footer (and the WhatsApp button) for Odoo's own pages, and the stylesheet that dresses them
 //    (src/odoo-skin.css, inside ip.css).
 // See ODOO_BOUTIQUE.md for the full procedure.
+if (!process.env.IP_FORCE_V6_PACK) {
+  console.error('Paquet Odoo de la V6, non adapté à la version 8 (pages fusionnées). Rien n’a été produit.');
+  process.exit(1);
+}
+
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { listPages, loadContent, renderMain } from './lib/site.mjs';
