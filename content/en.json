@@ -249,7 +249,9 @@
     "ball-sun": "Clear ice sphere resting on a blue ground",
     "white-rose": "White rose set in a long clear piece of ice, in a tall glass, on a black background",
     "cube-glove": "Ice cube engraved “Ice Please!” held in a black glove, on a black background",
-    "berry": "Blackberry resting on an ice cube in a pink cocktail, on a blue background"
+    "berry": "Blackberry resting on an ice cube in a pink cocktail, on a blue background",
+    "stick-bar": "Bartender placing a long clear piece of ice in a glass with tongs",
+    "ball-whisky": "Glass of whisky with an ice sphere, in daylight"
   },
   "specLabels": {
     "pack": "Packaging",
@@ -435,7 +437,6 @@
       "seeProduct": "View product",
       "redirect": "This page has moved.",
       "follow": "Continue",
-      "serviceVideo": "Computer-generated render: tongs place a clear ice cube in a glass.",
       "rangeCount": "{n} of {total}",
       "service": "For service",
       "keepScrolling": "Keep scrolling"

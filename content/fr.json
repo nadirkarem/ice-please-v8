@@ -249,7 +249,9 @@
     "ball-sun": "Sphère de glace transparente posée sur un fond bleu",
     "white-rose": "Rose blanche prise dans un long glaçon transparent, dans un verre haut, sur fond noir",
     "cube-glove": "Glaçon gravé « Ice Please! » tenu dans un gant noir, sur fond noir",
-    "berry": "Mûre posée sur un cube de glace dans un cocktail rosé, sur fond bleu"
+    "berry": "Mûre posée sur un cube de glace dans un cocktail rosé, sur fond bleu",
+    "stick-bar": "Barman plaçant un long glaçon transparent dans un verre à l’aide d’une pince",
+    "ball-whisky": "Verre de whisky avec une sphère de glace, à la lumière du jour"
   },
   "specLabels": {
     "pack": "Conditionnement",
@@ -435,7 +437,6 @@
       "seeProduct": "Voir le produit",
       "redirect": "Cette page a changé d’adresse.",
       "follow": "Continuer",
-      "serviceVideo": "Rendu de synthèse : une pince dépose un cube de glace transparent dans un verre.",
       "rangeCount": "{n} sur {total}",
       "service": "Pour le service",
       "keepScrolling": "Continuez de défiler"

@@ -27,9 +27,9 @@ const IMAGES = {
   'ice-stamp': { file: '18392-c5efe610/ChatGPT Image 25 mai 2026, 20_07_48.png', widths: [360, 640, 1086], focal: '50% 52%' },
 };
 
-// Version 8: six photographs come ready-made from the V7 (the company's own pictures, already cut to every width):
-// cube-sun, stick-sun, ball-sun, white-rose, cube-glove, berry. Their entries are kept when this script rewrites the manifest.
-const KEPT = ['cube-sun', 'stick-sun', 'ball-sun', 'white-rose', 'cube-glove', 'berry'];
+// Version 8: eight photographs come ready-made from the V7 (the company's own pictures, already cut to every width):
+// cube-sun, stick-sun, ball-sun, white-rose, cube-glove, berry, stick-bar, ball-whisky. Their entries are kept when this script rewrites the manifest.
+const KEPT = ['cube-sun', 'stick-sun', 'ball-sun', 'white-rose', 'cube-glove', 'berry', 'stick-bar', 'ball-whisky'];
 const previous = JSON.parse(await readFile(resolve(root, 'content/images.manifest.json'), 'utf8').catch(() => '{}'));
 const manifest = Object.fromEntries(KEPT.filter((id) => previous[id]).map((id) => [id, previous[id]]));
 await mkdir(out('img'), { recursive: true });

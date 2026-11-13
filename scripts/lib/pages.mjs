@@ -331,18 +331,16 @@ function row(ctx, id) {
         </li>`;
 }
 
-/** Service: the film of the hand that serves (tongs, a glass), beside the ice made for bars and events. */
+/**
+ * Service: one of the company's photographs of the gesture (a hand sets an Ice Stick in a glass with tongs, at the bar),
+ * beside the ice made for bars and events. SERVICE_IMAGE can be 'ball-whisky' (the Moon Ball in a glass of whisky) instead.
+ */
+const SERVICE_IMAGE = 'stick-bar';
 function service(ctx) {
   const { c, lang } = ctx;
   return `<section class="ip-section ip-service" data-set="sun" aria-labelledby="h-service">
       <div class="ip-wrap ip-service__grid">
-        <div class="ip-service__film" data-ip-video data-reveal>
-          <video muted loop playsinline preload="none" poster="/media/story-3-poster.jpg" aria-label="${esc(c.v8.ui.serviceVideo)}">
-            <source src="/media/story-3.mp4" type="video/mp4">
-            <source src="/media/story-3.webm" type="video/webm">
-          </video>
-          <button class="ip-film__toggle" type="button" data-ip-video-toggle aria-pressed="false" data-pause="${esc(c.ui.videoPause)}" data-play="${esc(c.ui.videoPlay)}"><span data-label>${esc(c.ui.videoPause)}</span></button>
-        </div>
+        <figure class="ip-service__media" data-reveal>${picture(ctx, SERVICE_IMAGE, { alt: alt(ctx, SERVICE_IMAGE), sizes: '(min-width: 900px) 40vw, 92vw' })}</figure>
         <div class="ip-service__body">
           <div class="ip-sectionhead" data-reveal><h2 id="h-service">${esc(c.v8.ui.service)}</h2></div>
           <ul class="ip-rows" data-reveal>${SERVICE_IDS.map((id) => row(ctx, id)).join('')}</ul>
@@ -386,18 +384,18 @@ export function home(ctx) {
 
     <div class="ip-night" data-set="night">
       ${scene(ctx, {
-        id: 'h-custom', image: 'white-rose', title: v.product['custom-ice'], lead: v.lines.inclusions,
-        body: `<div class="ip-actions">
-            <a class="ip-btn ip-btn--primary ip-btn--lg" href="${quoteUrl(ctx)}"><span>${esc(c.shop.buy.requestQuote)}</span>${icon('arrow')}</a>
-            <a class="ip-link" href="${productUrl(ctx, 'custom-ice')}"><span>${md(ctx, c.products['custom-ice'].h1)}</span>${icon('arrow')}</a>
-          </div>`,
-      })}
-      ${scene(ctx, {
-        id: 'h-sign', image: 'cube-glove', ratio: '1 / 1', flip: true, title: v.lines.signature, lead: v.lines.signatureText,
+        id: 'h-sign', image: 'cube-glove', ratio: '1 / 1', title: v.lines.signature, lead: v.lines.signatureText,
         body: `<p>${md(ctx, stamp.paras[1])}</p>
           <div class="ip-actions">
             <a class="ip-btn ip-btn--primary ip-btn--lg" href="${productUrl(ctx, 'ice-stamp')}"><span>${md(ctx, stamp.h1)}</span>${icon('arrow')}</a>
             <a class="ip-link" href="${quoteUrl(ctx)}"><span>${esc(c.shop.buy.requestQuote)}</span>${icon('arrow')}</a>
+          </div>`,
+      })}
+      ${scene(ctx, {
+        id: 'h-custom', image: 'white-rose', flip: true, title: v.product['custom-ice'], lead: v.lines.inclusions,
+        body: `<div class="ip-actions">
+            <a class="ip-btn ip-btn--primary ip-btn--lg" href="${quoteUrl(ctx)}"><span>${esc(c.shop.buy.requestQuote)}</span>${icon('arrow')}</a>
+            <a class="ip-link" href="${productUrl(ctx, 'custom-ice')}"><span>${md(ctx, c.products['custom-ice'].h1)}</span>${icon('arrow')}</a>
           </div>`,
       })}
     </div>

@@ -1315,7 +1315,6 @@ html.lenis, html.lenis body { height: auto; }
   .ip-scene__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); }
   .ip-scene--flip .ip-scene__grid { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
   .ip-scene--flip .ip-scene__media { order: 2; }
-  .ip-scene--flip .ip-scene__media { width: min(100%, 560px); justify-self: end; }
 }
 
 /* the engagement film (right after the intro): a two-sentence title, set smaller than the V6 one-liner */
@@ -1323,13 +1322,11 @@ html.lenis, html.lenis body { height: auto; }
 @media (max-width: 760px) { .ip-reveal--long .ip-reveal__title { max-width: 9ch; font-size: clamp(2.5rem, 0.8rem + 9vw, 3.6rem); } }
 .ip[lang='ar'] .ip-reveal--long .ip-reveal__title { line-height: 1.2; letter-spacing: 0; }
 
-/* ---- service: the film of the hand that serves, and the ice for bars and events -------------------------------- */
+/* ---- service: the gesture of the bar (a photograph), and the ice for bars and events ---------------------------- */
 .ip-service__grid { display: grid; gap: clamp(28px, 5vw, 88px); align-items: center; }
-.ip-service__film { position: relative; overflow: hidden; border-radius: var(--ip-radius-l); aspect-ratio: 4 / 3; background: var(--ip-mist); box-shadow: 0 30px 60px -38px rgb(22 48 77 / 0.55); }
-.ip-service__film video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; }
-.ip-film__toggle { position: absolute; z-index: 2; inset-inline-end: 14px; bottom: 14px; min-height: 44px; padding: 0 1.1em; border: 0; border-radius: 999px; color: var(--ip-ink); font-size: 0.9rem; font-weight: 600; background: rgb(255 255 255 / 0.8); -webkit-backdrop-filter: blur(14px) saturate(1.5); backdrop-filter: blur(14px) saturate(1.5); box-shadow: inset 0 0 0 1px rgb(11 22 35 / 0.14), 0 6px 20px rgb(11 22 35 / 0.12); transition: background-color 0.25s, transform 0.3s var(--ip-spring); }
-.ip-film__toggle:active { transform: scale(0.96); }
-@media (hover: hover) and (pointer: fine) { .ip-film__toggle:hover { background: #fff; } }
+.ip-service__media { overflow: hidden; border-radius: var(--ip-radius-l); aspect-ratio: 4 / 5; background: var(--ip-mist); box-shadow: 0 30px 60px -38px rgb(22 48 77 / 0.55); }
+.ip-service__media .ip-pic, .ip-service__media img { width: 100%; height: 100%; }
+.ip-service__media img { object-fit: cover; object-position: var(--fp); }
 .ip-rows { display: grid; }
 .ip-rows > li { border-bottom: 1px solid var(--ip-line); }
 .ip-rows > li:first-child { border-top: 1px solid var(--ip-line); }
@@ -1352,7 +1349,6 @@ html.lenis, html.lenis body { height: auto; }
 @media (min-width: 640px) { .ip-deliver .ip-btn { flex: 0 0 auto; } }
 @media (min-width: 900px) {
   .ip-service__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); }
-  .ip-service__film { aspect-ratio: 5 / 6; }
   .ip-row { grid-template-columns: 96px minmax(0, 1fr) auto; gap: 20px; }
 }
 

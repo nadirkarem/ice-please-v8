@@ -12,7 +12,7 @@ La V6 (design, photos, vidéos) avec la structure de la V7 :
 
 - **« Nos glaçons » et la boutique ne font plus qu'une page** (`/shop/`) : les cartes de la V6 (photo, nom, texte, flèche ; descriptions à hauteur égale), des filtres par catégorie (sans recherche ni compteur), puis « Notre Vision ». Chaque carte ouvre la page du glaçon, qui le présente et le vend (`/shop/cube-xl/`…) : prix, options et panier sont là.
 - **« À propos » est supprimée** ; sa photo (le glaçon signé, tenu dans un gant noir) signe maintenant l'accueil.
-- **Accueil** : après l'intro, la vidéo de l'engagement (« Manipulé avec précision. Servi avec perfection. ») ; puis les trois glaçons de base, qui défilent vers la droite pendant qu'on descend (vers la gauche en arabe), avec l'indication « Continuez de défiler » ; puis, sur fond noir, les glaçons sur mesure et la signature ; le service avec la vidéo du service, Instagram et le contact de la V6.
+- **Accueil** : après l'intro, la vidéo de l'engagement (« Manipulé avec précision. Servi avec perfection. ») ; puis les trois glaçons de base, qui défilent vers la droite pendant qu'on descend (vers la gauche en arabe), avec l'indication « Continuez de défiler » ; puis, sur fond noir, la signature (le glaçon signé au gant noir) et les glaçons sur mesure ; le service avec une photo de l'entreprise (un Ice Stick posé à la pince au bar), Instagram et le contact de la V6.
 - **Fond bleu clair** (`#E3F1FA`) au lieu du blanc ; noir (`#04080C`) pour le sur-mesure et la signature, atteint par un long dégradé.
 - Les anciennes adresses (`/glacons/`, `/about-us/`, `/cube-xl/`…) redirigent vers les nouvelles.
 - Le paquet Odoo de la V6 (`npm run odoo`) n'est pas adapté à cette version.
