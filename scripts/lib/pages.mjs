@@ -3,7 +3,7 @@
 import { esc, md, waLink, picture, pictureResponsive } from './html.mjs';
 import { icon } from './icons.mjs';
 import { PRODUCT_IDS, REDIRECTS, shopProductOf, urlFor } from './routes.mjs';
-import { CARD_IMAGE, PAGE_IMAGE, productInfo } from './catalog.mjs';
+import { CARD_IMAGE, PAGE_IMAGE } from './catalog.mjs';
 import * as shopPages from './shop-pages.mjs';
 
 const alt = (ctx, id) => ctx.c.alt[id] ?? '';
@@ -128,9 +128,9 @@ function saga(ctx, { id, title, text, name, label }) {
  * visitor scrolls, and the title is revealed with it (an ink copy on the page, a white copy on the video,
  * cut by the same window). Without script or under reduced motion it is a plain full-bleed band.
  */
-function reveal(ctx, { id, title, text, link, name, label, night = false }) {
+function reveal(ctx, { id, title, text, link, name, label, long = false }) {
   const { c } = ctx;
-  return `<section class="ip-reveal${night ? ' ip-reveal--night' : ''}" data-set="${night ? 'night' : 'sun'}" data-ip-reveal data-ip-video aria-labelledby="${id}">
+  return `<section class="ip-reveal${long ? ' ip-reveal--long' : ''}" data-set="sun" data-ip-reveal data-ip-video aria-labelledby="${id}">
       <div class="ip-reveal__stage">
         <p class="ip-reveal__title ip-reveal__title--page" aria-hidden="true">${esc(title)}</p>
         <div class="ip-reveal__media">
@@ -290,7 +290,10 @@ function range(ctx) {
         <div class="ip-range__window" data-ip-window>
           <ul class="ip-range__track" data-ip-track>${PIECES.map((id) => piece(ctx, id)).join('')}</ul>
         </div>
-        <div class="ip-wrap ip-range__foot" aria-hidden="true"><span class="ip-range__bar"><i data-ip-bar></i></span></div>
+        <div class="ip-wrap ip-range__foot" aria-hidden="true">
+          <p class="ip-range__cue"><span>${esc(c.v8.ui.keepScrolling)}</span><span class="ip-range__arrow">${icon('arrow')}</span></p>
+          <span class="ip-range__bar"><i></i></span>
+        </div>
       </div>
     </section>`;
 }
@@ -377,6 +380,8 @@ export function home(ctx) {
       <div class="ip-wrap"><p class="ip-intro__text" data-reveal>${md(ctx, h.intro)}</p></div>
     </section>
 
+    ${reveal(ctx, { id: 'h-craft', title: v.lines.craft, text: h.savoir.text, link: h.savoir.link, name: 'ice-hero', label: c.ui.videoLabel, long: true })}
+
     ${range(ctx)}
 
     <div class="ip-night" data-set="night">
@@ -397,8 +402,6 @@ export function home(ctx) {
       })}
     </div>
 
-    ${reveal(ctx, { id: 'h-craft', title: v.lines.craft, text: h.savoir.text, link: h.savoir.link, name: 'ice-hero', label: c.ui.videoLabel, night: true })}
-
     ${service(ctx)}
 
     ${instagram(ctx)}
@@ -417,35 +420,21 @@ export function home(ctx) {
 
 // ---------------------------------------------------------------- "Nos glaçons": the range and the shop in one window
 
-/** A card of the range that also sells: photograph, name, what it is for, price, and the one action that fits the product. */
-function rangeTile(ctx, id) {
-  const { c } = ctx;
-  const t = c.shop;
-  const p = c.products[id];
-  const info = productInfo(ctx, id);
+/** A card of the range, as in the V6: photograph, name, what it is for, an arrow. The whole card opens the product page. */
+function tile(ctx, id) {
+  const p = ctx.c.products[id];
   const img = CARD_IMAGE[id];
-  const price = info.mode === 'quote'
-    ? `<span class="ip-buy__badge">${esc(t.buy.quoteOnly)}</span>`
-    : `${shopPages.priceTag(ctx, info.price)}${info.unit ? `<span class="ip-tile__unit">/ ${esc(info.unit)}</span>` : ''}`;
-  let action;
-  if (info.mode === 'quote') {
-    action = `<a class="ip-btn ip-btn--ghost ip-btn--sm" href="${quoteUrl(ctx)}"><span>${esc(t.buy.requestQuote)}</span></a>`;
-  } else if (info.option || info.min > 1) {
-    action = `<a class="ip-btn ip-btn--ghost ip-btn--sm" href="${info.href}"><span>${esc(t.buy.chooseOptions)}</span>${icon('arrow')}</a>`;
-  } else {
-    action = `<button class="ip-btn ip-btn--primary ip-btn--sm" type="button" data-ip-quick="${id}" aria-label="${esc(`${t.buy.add} : ${p.card}`)}">${icon('bag')}<span>${esc(t.buy.add)}</span></button>`;
-  }
-  return `<li class="ip-tile" data-cat="${info.category}">
-        <a class="ip-tile__media" href="${info.href}" tabindex="-1" aria-hidden="true">${picture(ctx, img, { alt: alt(ctx, img), sizes: '(min-width: 1000px) 26vw, (min-width: 640px) 45vw, 112px' })}</a>
-        <div class="ip-tile__body">
-          <h2 class="ip-tile__name"><a href="${info.href}">${esc(p.card)}</a></h2>
-          <p class="ip-tile__desc">${md(ctx, p.paras[0])}</p>
-          <div class="ip-tile__buy">
-            <p class="ip-tile__price">${price}</p>
-            ${action}
-          </div>
-        </div>
-      </li>`;
+  const category = ctx.shop.categories.find((cat) => cat.products.includes(id))?.id ?? '';
+  return `<li class="ip-tile" data-cat="${category}">
+      <a class="ip-tile__link" href="${productUrl(ctx, id)}">
+        <span class="ip-tile__media">${picture(ctx, img, { alt: alt(ctx, img), sizes: '(min-width: 1000px) 26vw, (min-width: 640px) 45vw, 120px' })}</span>
+        <span class="ip-tile__body">
+          <span class="ip-tile__name">${esc(p.card)}</span>
+          <span class="ip-tile__desc">${md(ctx, p.paras[0])}</span>
+          <span class="ip-tile__go">${icon('arrow')}</span>
+        </span>
+      </a>
+    </li>`;
 }
 
 export function glacons(ctx) {
@@ -462,7 +451,7 @@ export function glacons(ctx) {
       <div class="ip-wrap">
         ${shopPages.demoNote(ctx)}
         <div class="ip-chips" role="group" aria-label="${esc(t.list.filters)}">${chips}</div>
-        <ul class="ip-tiles" data-ip-grid>${PRODUCT_IDS.map((id) => rangeTile(ctx, id)).join('')}</ul>
+        <ul class="ip-tiles" data-ip-grid>${PRODUCT_IDS.map((id) => tile(ctx, id)).join('')}</ul>
       </div>
     </section>
     <section class="ip-section ip-about ip-vision" aria-labelledby="h-vision">

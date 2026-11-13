@@ -94,7 +94,7 @@ html.lenis, html.lenis body { height: auto; }
 /* touch: no wait for a double-tap zoom on controls, and a long press on a control neither selects its label nor opens
    the link preview (text and pictures elsewhere stay selectable). */
 :where(.ip) :is(a, button, label, summary, select, [role='tab']) { touch-action: manipulation; }
-:where(.ip) :is(button, .ip-btn, .ip-chip, .ip-tab, .ip-lang a, .ip-nav a, .ip-sheet__nav a, .ip-qty, .ip-iconbtn, .ip-cartlink, .ip-burger, .ip-card__link, .ip-tile__media, .ip-piece__media, .ip-row, .ip-pcard__media, .ip-insta__tile, .ip-choice, .ip-wa, .ip-details a) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+:where(.ip) :is(button, .ip-btn, .ip-chip, .ip-tab, .ip-lang a, .ip-nav a, .ip-sheet__nav a, .ip-qty, .ip-iconbtn, .ip-cartlink, .ip-burger, .ip-card__link, .ip-tile__link, .ip-piece__media, .ip-row, .ip-pcard__media, .ip-insta__tile, .ip-choice, .ip-wa, .ip-details a) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 :where(.ip) :is(.ip-footer, .ip-hero) :focus-visible { outline-color: var(--ip-frost); }
 :where(.ip) ::selection { background: var(--ip-frost); color: var(--ip-ink); }
 :where(.ip) ::placeholder { color: #5d6c7d; opacity: 1; }
@@ -771,34 +771,36 @@ html.lenis, html.lenis body { height: auto; }
   .ip-about__split--flip .ip-about__media { order: 2; }
 }
 
-/* "Nos glaçons" (the range and the shop in one window): horizontal cards on phones, tall cards from 1000px.
-   Each card shows the price and the one action that fits (add, choose the options, ask for a quote). */
+/* "Nos glaçons": the V6 cards (horizontal rows on phones, tall cards from 1000px), filtered by category.
+   Every description keeps the room of three lines, so the arrows line up whatever the length of the text. */
 .ip-shop .ip-chips { margin-bottom: clamp(22px, 3vw, 36px); }
 .ip-tiles { display: grid; gap: 14px; }
-.ip-tile { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: start; padding: 12px; border-radius: 24px; background: #fff; box-shadow: inset 0 0 0 1px var(--ip-line); }
 .ip-tile[hidden] { display: none; }
-.ip-tile__media { display: block; overflow: hidden; border-radius: 16px; aspect-ratio: 1; background: var(--ip-mist); transition: transform 0.4s var(--ip-spring); }
-.ip-tile__media:active { transform: scale(0.975); transition-duration: 0.08s; }
+.ip-tile__link {
+  position: relative; display: grid; grid-template-columns: 112px 1fr; gap: 16px; align-items: center; padding: 12px;
+  border-radius: 24px; background: #fff; box-shadow: inset 0 0 0 1px var(--ip-line); transition: transform 0.4s var(--ip-spring), box-shadow 0.3s;
+}
+.ip-tile__link:active { transform: scale(0.985); transition-duration: 0.08s; }
+.ip-tile__media { display: block; overflow: hidden; border-radius: 16px; aspect-ratio: 1; background: var(--ip-mist); }
 .ip-tile__media .ip-pic, .ip-tile__media img { width: 100%; height: 100%; }
 .ip-tile__media img { object-fit: cover; object-position: var(--fp); transition: transform 1s var(--ip-ease); }
-.ip-tile__body { display: grid; gap: 4px; min-width: 0; }
+.ip-tile__body { display: grid; gap: 4px; padding-inline-end: 52px; min-width: 0; }
 .ip-tile__name { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
-.ip-tile__name a { display: inline-flex; align-items: center; min-height: 44px; margin-block: -8px; }
-.ip-tile__desc { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; font-size: 0.93rem; line-height: 1.45; color: var(--ip-slate); }
-.ip-tile__buy { display: grid; justify-items: start; gap: 8px; margin-top: 8px; }
-.ip-tile__price { font-weight: 650; font-variant-numeric: tabular-nums; }
-.ip-tile__unit { margin-inline-start: 0.35em; font-size: 0.9rem; font-weight: 500; color: var(--ip-slate); }
-@media (hover: hover) and (pointer: fine) { .ip-tile:hover .ip-tile__media img { transform: scale(1.045); } .ip-tile__name a:hover { text-decoration: underline; text-underline-offset: 0.3em; } }
+.ip-tile__desc { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; min-height: calc(3 * 1.45em); font-size: 0.93rem; line-height: 1.45; color: var(--ip-slate); }
+.ip-tile__go { position: absolute; inset-inline-end: 14px; bottom: 14px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--ip-ink); color: #fff; }
+.ip-tile__go .ip-icon { width: 18px; height: 18px; }
+@media (hover: hover) and (pointer: fine) {
+  .ip-tile__link:hover img { transform: scale(1.045); }
+  .ip-tile__link:hover .ip-tile__go .ip-icon--dir { transform: translateX(3px); }
+  .ip[dir='rtl'] .ip-tile__link:hover .ip-tile__go .ip-icon--dir { transform: scaleX(-1) translateX(3px); }
+}
 @media (min-width: 640px) { .ip-tiles { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
 @media (min-width: 1000px) {
-  .ip-tiles { grid-template-columns: repeat(3, 1fr); gap: 48px 24px; }
-  .ip-tile { display: flex; flex-direction: column; gap: 0; padding: 0; background: transparent; box-shadow: none; }
+  .ip-tiles { grid-template-columns: repeat(3, 1fr); gap: 44px 24px; }
+  .ip-tile__link { display: block; padding: 0; background: transparent; box-shadow: none; }
   .ip-tile__media { aspect-ratio: 4 / 5; border-radius: var(--ip-radius-l); }
-  .ip-tile__body { flex: 1; align-content: start; padding-top: 16px; gap: 6px; }
-  .ip-tile__name { font-size: 1.3rem; }
-  .ip-tile__desc { -webkit-line-clamp: 3; line-clamp: 3; }
-  .ip-tile__buy { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--ip-line); }
-  .ip-tile__desc { margin-bottom: 10px; }
+  .ip-tile__body { padding: 16px 0 0; gap: 6px; }
+  .ip-tile__go { position: static; margin-top: 8px; width: 40px; height: 40px; }
 }
 
 /* our vision, under the range */
@@ -1218,7 +1220,7 @@ html.lenis, html.lenis body { height: auto; }
 .ip-range { position: relative; padding-block: clamp(32px, 5vw, 72px) clamp(40px, 6vw, 88px); }
 .ip-range__head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: clamp(18px, 2.6vw, 32px); }
 .ip-range__head .ip-link { white-space: nowrap; }
-.ip-range__window { overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; padding-block: 6px 30px; }
+.ip-range__window { overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; padding-block: 8px 44px; }
 .ip-range__window::-webkit-scrollbar { display: none; }
 .ip-range__track { display: flex; gap: clamp(14px, 2vw, 28px); width: max-content; padding-inline: max(var(--ip-gutter), calc((100vw - var(--ip-wrap)) / 2)); }
 .ip-range__foot { display: none; }
@@ -1227,7 +1229,7 @@ html.lenis, html.lenis body { height: auto; }
 .ip-piece__card {
   display: grid; grid-template-rows: auto 1fr; height: 100%; overflow: hidden;
   padding: 10px; border-radius: var(--ip-radius-l); background: #fff;
-  box-shadow: inset 0 0 0 1px rgb(11 22 35 / 0.06), 0 30px 60px -38px rgb(22 48 77 / 0.55);
+  box-shadow: inset 0 0 0 1px rgb(11 22 35 / 0.06), 0 22px 44px -30px rgb(22 48 77 / 0.5);
 }
 .ip-piece__media { display: block; overflow: hidden; border-radius: 20px; aspect-ratio: 5 / 4; background: var(--ip-mist); transition: transform 0.4s var(--ip-spring); }
 .ip-piece__media:active { transform: scale(0.98); transition-duration: 0.08s; }
@@ -1240,7 +1242,7 @@ html.lenis, html.lenis body { height: auto; }
 .ip-piece__fact { font-size: 0.95rem; font-weight: 600; color: var(--ip-slate); }
 .ip-piece__go { margin-top: 6px; }
 @media (hover: hover) and (pointer: fine) { .ip-piece__card:hover .ip-piece__media img { transform: scale(1.04); } }
-@media (min-height: 760px) and (max-width: 899px) { .ip-piece__text { display: block; font-size: 0.98rem; line-height: 1.5; } }
+@media (min-height: 840px) and (max-width: 899px) { .ip-piece__text { display: block; font-size: 0.98rem; line-height: 1.5; } }
 @media (min-width: 900px) {
   .ip-piece { width: min(76vw, 1060px); }
   .ip-piece__card { grid-template-rows: none; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: stretch; height: clamp(440px, 62svh, 620px); padding: 12px; }
@@ -1253,23 +1255,49 @@ html.lenis, html.lenis body { height: auto; }
 .js .ip-range.is-live { height: calc(100svh + var(--ip-run, 0px)); padding: 0; }
 .ip-range.is-live .ip-range__pin {
   position: sticky; top: 0; height: 100svh; overflow: clip;
-  display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; padding-block: calc(var(--ip-bar-h) + 14px) 10px;
+  display: grid; grid-template-columns: minmax(0, 1fr); align-content: safe center; padding-block: calc(var(--ip-bar-h) + 14px) 10px;
 }
 .ip-range.is-live .ip-range__window { overflow: clip; scroll-snap-type: none; }
 .ip-range.is-live .ip-range__track { transform: translate3d(var(--x, 0px), 0, 0); will-change: transform; }
-.ip-range.is-live .ip-range__foot { display: block; }
-.ip-range__bar { display: block; height: 2px; max-width: 240px; border-radius: 2px; background: rgb(11 22 35 / 0.12); overflow: hidden; }
+.ip-range.is-live .ip-range__foot { display: flex; align-items: center; gap: 18px; }
+/* the cue: it says what to do (keep scrolling down, the strip moves sideways) and steps back once the last card is in */
+.ip-range__cue { display: inline-flex; align-items: center; gap: 12px; flex: none; margin: 0; font-size: 1.05rem; font-weight: 600; color: var(--ip-ink); opacity: min(1, calc((1 - var(--q, 0)) * 8)); transition: opacity 0.3s; }
+.ip-range__arrow { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--ip-ink); color: #fff; }
+.ip-range__arrow .ip-icon { width: 18px; height: 18px; animation: ip-nudge 1.8s var(--ip-ease) infinite; }
+@keyframes ip-nudge { 0%, 100% { translate: 0 0; } 45% { translate: 5px 0; } }
+.ip[dir='rtl'] .ip-range__arrow .ip-icon { animation-name: ip-nudge-rtl; }
+@keyframes ip-nudge-rtl { 0%, 100% { translate: 0 0; } 45% { translate: -5px 0; } }
+.ip-range__bar { display: block; flex: 1; height: 2px; max-width: 240px; border-radius: 2px; background: rgb(11 22 35 / 0.12); overflow: hidden; }
 .ip-range__bar i { display: block; height: 100%; background: var(--ip-fjord); transform: scaleX(var(--q, 0)); transform-origin: left; }
 .ip[dir='rtl'] .ip-range__bar i { transform-origin: right; }
-@media (max-width: 899px) { .ip-range.is-live .ip-range__window { padding-block: 4px 16px; } }
+@media (max-width: 899px) {
+  .ip-range.is-live .ip-range__window { padding-block: 6px 26px; }
+  .ip-piece__card { box-shadow: inset 0 0 0 1px rgb(11 22 35 / 0.06), 0 14px 28px -20px rgb(22 48 77 / 0.5); }
+  /* a phone screen holds the title, the card and the cue at once */
+  .ip-range__head h2 { font-size: clamp(1.75rem, 1.2rem + 2.6vw, 2.25rem); }
+  .ip-range__head { gap: 12px; }
+  .ip-piece__go { min-height: 46px; }
+}
+@media (max-width: 899px) and (max-height: 720px) { .ip-piece__fact { display: none; } .ip-piece__body { gap: 8px; padding-top: 14px; } }
+@media (max-width: 899px) and (max-height: 640px) {
+  .ip-piece__media { aspect-ratio: 16 / 10; }
+  .ip-range.is-live .ip-range__pin { padding-top: calc(var(--ip-bar-h) + 4px); }
+}
+@media (max-width: 899px) and (max-height: 580px) {
+  .ip-piece__media { aspect-ratio: 2 / 1; }
+  .ip-range.is-live .ip-range__pin { padding-top: var(--ip-bar-h); }
+  .ip-range.is-live .ip-range__window { padding-bottom: 18px; }
+}
 
 /* ---- night: the made-to-measure ice and the signature, on the black of their photographs ---------------------
    The page darkens over a long gradient (dusk) rather than meeting the black on a line. */
 .ip-night {
   --dusk: clamp(150px, 28svh, 320px);
   position: relative; color: #fff;
-  padding-block: var(--dusk) clamp(56px, 8vw, 120px);
-  background: linear-gradient(to bottom, var(--ip-glacier) 0, #9fb7c6 calc(var(--dusk) * 0.28), #2a3a46 calc(var(--dusk) * 0.62), var(--ip-night) var(--dusk));
+  padding-block: var(--dusk);
+  background: linear-gradient(to bottom,
+    var(--ip-glacier) 0, #9fb7c6 calc(var(--dusk) * 0.28), #2a3a46 calc(var(--dusk) * 0.62), var(--ip-night) var(--dusk),
+    var(--ip-night) calc(100% - var(--dusk)), #2a3a46 calc(100% - var(--dusk) * 0.62), #9fb7c6 calc(100% - var(--dusk) * 0.28), var(--ip-glacier) 100%);
 }
 .ip-night :focus-visible { outline-color: var(--ip-frost); }
 .ip-scene { padding-block: clamp(36px, 6vw, 96px); }
@@ -1290,12 +1318,10 @@ html.lenis, html.lenis body { height: auto; }
   .ip-scene--flip .ip-scene__media { width: min(100%, 560px); justify-self: end; }
 }
 
-/* the engagement film opens on the same black */
-.ip-reveal--night .ip-reveal__stage { background: var(--ip-night); }
-.ip-reveal--night .ip-reveal__title--page { color: rgb(255 255 255 / 0.92); }
-.ip-reveal--night .ip-reveal__title { max-width: 12ch; font-size: clamp(2.8rem, 1rem + 5.4vw, 6.6rem); line-height: 0.98; letter-spacing: -0.036em; }
-@media (max-width: 760px) { .ip-reveal--night .ip-reveal__title { max-width: 9ch; font-size: clamp(2.5rem, 0.8rem + 9vw, 3.6rem); } }
-.ip[lang='ar'] .ip-reveal--night .ip-reveal__title { line-height: 1.2; letter-spacing: 0; }
+/* the engagement film (right after the intro): a two-sentence title, set smaller than the V6 one-liner */
+.ip-reveal--long .ip-reveal__title { max-width: 12ch; font-size: clamp(2.8rem, 1rem + 5.4vw, 6.6rem); line-height: 0.98; letter-spacing: -0.036em; }
+@media (max-width: 760px) { .ip-reveal--long .ip-reveal__title { max-width: 9ch; font-size: clamp(2.5rem, 0.8rem + 9vw, 3.6rem); } }
+.ip[lang='ar'] .ip-reveal--long .ip-reveal__title { line-height: 1.2; letter-spacing: 0; }
 
 /* ---- service: the film of the hand that serves, and the ice for bars and events -------------------------------- */
 .ip-service__grid { display: grid; gap: clamp(28px, 5vw, 88px); align-items: center; }
@@ -1367,7 +1393,7 @@ html.lenis, html.lenis body { height: auto; }
   .ip *, .ip *::before, .ip *::after { animation: none !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
   .js [data-reveal] { opacity: 1; transform: none; }
   .ip-sheet__nav a { transform: none; }
-  .ip-card:hover img, .ip-tile:hover .ip-tile__media img, .ip-row:hover img { transform: none; }
+  .ip-card:hover img, .ip-tile__link:hover img, .ip-row:hover img { transform: none; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .ip-header { --bar-bg: #e3f1fa; --bar-filter: none; }

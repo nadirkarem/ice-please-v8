@@ -437,7 +437,8 @@
       "follow": "Continue",
       "serviceVideo": "Computer-generated render: tongs place a clear ice cube in a glass.",
       "rangeCount": "{n} of {total}",
-      "service": "For service"
+      "service": "For service",
+      "keepScrolling": "Keep scrolling"
     }
   }
 }

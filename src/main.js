@@ -456,7 +456,10 @@ function initScenes() {
       return span > 0 ? clamp(-section.getBoundingClientRect().top / span) : 1;
     };
     const apply = (p) => {
-      section.style.setProperty('--ip-e', ease(clamp(p / 0.6)).toFixed(4));
+      const e = ease(clamp(p / 0.6));
+      section.style.setProperty('--ip-e', e.toFixed(4));
+      // once the film fills the screen, the bar and the phone's status bar take its dark blue (see initTone)
+      if (section.dataset.set) section.dataset.set = e > 0.5 ? 'film' : 'sun';
       section.classList.toggle('is-open', p > (section.classList.contains('is-open') ? 0.58 : 0.66));
     };
     const tick = () => {
@@ -543,7 +546,7 @@ function initRange() {
    around the page follows (theme-color: the status bar and Android's address bar). The root background, what the rubber
    band shows past either end, is the colour of the top of the page in its upper half and the footer's in the lower half. */
 function initTone() {
-  const SET_COLORS = { sun: '#e3f1fa', night: '#04080c', photo: '#58778a', footer: '#16304d' }; // inside: initPage() runs before the module's constants
+  const SET_COLORS = { sun: '#e3f1fa', night: '#04080c', film: '#0f2c57', photo: '#58778a', footer: '#16304d' }; // inside: initPage() runs before the module's constants
   const header = document.querySelector('[data-ip-header]');
   const theme = document.querySelector('meta[name="theme-color"]');
   if (!header) return;
@@ -558,7 +561,7 @@ function initTone() {
       const r = el.getBoundingClientRect();
       if (r.top <= line && r.bottom > line) set = el.matches('.ip-footer') ? 'footer' : el.dataset.set;
     }
-    const over = set === 'night' ? 'night' : 'sun';
+    const over = set === 'night' || set === 'film' ? 'night' : 'sun';
     if (header.dataset.over !== over) header.dataset.over = over;
     if (theme && theme.content !== SET_COLORS[set]) theme.content = SET_COLORS[set];
     const lower = scrollTop() + innerHeight / 2 > document.documentElement.scrollHeight / 2;

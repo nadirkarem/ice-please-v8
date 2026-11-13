@@ -437,7 +437,8 @@
       "follow": "Continuer",
       "serviceVideo": "Rendu de synthèse : une pince dépose un cube de glace transparent dans un verre.",
       "rangeCount": "{n} sur {total}",
-      "service": "Pour le service"
+      "service": "Pour le service",
+      "keepScrolling": "Continuez de défiler"
     }
   }
 }

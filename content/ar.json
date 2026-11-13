@@ -437,7 +437,8 @@
       "follow": "متابعة",
       "serviceVideo": "صورة مُنشأة حاسوبياً: ملقط يضع مكعب ثلج شفافاً في كأس.",
       "rangeCount": "{n} من {total}",
-      "service": "للخدمة"
+      "service": "للخدمة",
+      "keepScrolling": "تابعوا التمرير"
     }
   }
 }
